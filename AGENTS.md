@@ -40,3 +40,9 @@ Ver `docs/18-agent-squads.md`.
 - App: https://inovahub.inovatitech.com.br
 - API: https://api-inovahub.inovatitech.com.br
 - VPS: 128.140.77.31
+
+## Memória / estado (obrigatório)
+
+- Fatos travados: `.cursor/rules/inova-hub-memory.mdc`
+- Estado vivo (atualizar sempre): [`docs/25-project-state.md`](docs/25-project-state.md)
+- Deploy PuTTY: [`docs/24-deploy-vps-putty.md`](docs/24-deploy-vps-putty.md)

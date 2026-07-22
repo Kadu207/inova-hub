@@ -1,0 +1,48 @@
+---
+description: Memória permanente Inova Hub — fatos travados (não inventar)
+alwaysApply: true
+---
+
+# Memória permanente — Inova Hub / Finova
+
+Antes de afirmar estado de DNS, Docker, portas ou deploy, **ler** `docs/25-project-state.md` e atualizar esse arquivo quando a realidade mudar. Não inventar status.
+
+## Identidade
+
+- Produto: **Inova Hub** (painel) + **Finova** (WhatsApp). Não chamar de “Snirfado” / “Meu Assessor”.
+- Repos: https://github.com/Kadu207/inova-hub · https://gitlab.com/Kadu207/inova-hub
+- Remotes locais: `origin` = GitHub, `gitlab` = GitLab
+
+## Domínio / Cloudflare
+
+- Zona: `inovatitech.com.br`
+- Hub: `https://inovahub.inovatitech.com.br`
+- API: `https://api-inovahub.inovatitech.com.br` (**não** `api.inovahub.` — Universal SSL Free não cobre 2 níveis)
+- VPS: `128.140.77.31` · user SSH típico: `gestaoti` (PuTTY)
+- Origem: **Cloudflare Tunnel** nome **`inovahub`** → `http://127.0.0.1:8088`
+- 80/443 da VPS já ocupados por outros projetos — Hub **não** disputa essas portas
+
+## Stack
+
+- Laravel 13 / PHP 8.4 · PostgreSQL 16 · Redis · Docker Compose
+- Pagamentos MVP: **Asaas only** · Bancos: **Pluggy** read-only · E-mail: Resend
+
+## Portas
+
+| Ambiente | App | Postgres | Redis |
+|----------|-----|----------|-------|
+| Local (compose) | `127.0.0.1:8092` | `127.0.0.1:5442` | `127.0.0.1:6392` |
+| VPS (prod) | `127.0.0.1:8088` | só rede Docker | só rede Docker |
+
+Docker Desktop neste PC frequentemente **não publica** portas no host; validar com `docker exec inovahub-app curl …`.
+
+## Deploy VPS
+
+- Path: `/opt/inovahub`
+- Compose: `docker compose -f docker-compose.prod.yml --env-file .env.prod`
+- **Nunca** copiar `app/vendor` via pscp; usar `composer install` no container
+- Segredos só em `.env` / `.env.prod` (nunca no git / chat)
+
+## Engenharia
+
+- SDD + TDD + EDD · Spec Kit · multi-tenant + RLS · docs canônicas em `docs/20-system-design.md`

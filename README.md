@@ -48,6 +48,7 @@ docs/           # Snirf, PRD, arquitetura, roadmap
 23. [UI 100% responsiva](docs/22-responsive-ui.md)
 24. [Banco multi-tenant + RLS](docs/23-multitenant-database.md)
 25. [**Deploy VPS via PuTTY**](docs/24-deploy-vps-putty.md) — Compose + Tunnel `:8088`
+26. [**Estado do projeto (memória)**](docs/25-project-state.md) — atualizar para não alucinar
 
 ## Decisões MVP
 

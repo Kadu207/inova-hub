@@ -1,6 +1,6 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-22 (origem local VPS HTTP 200)  
+**Última atualização:** 2026-07-22 (API pública 200; Hub NXDOMAIN)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
 
 ## Repositórios
@@ -15,8 +15,8 @@
 
 | Host | Status conhecido |
 |------|------------------|
-| `inovahub.inovatitech.com.br` | Pode ter ficado NXDOMAIN se CNAME sumiu — **verificar** |
-| `api-inovahub.inovatitech.com.br` | DNS CF ok; origem depende de Tunnel + `:8088` |
+| `inovahub.inovatitech.com.br` | **NXDOMAIN** — falta CNAME / Public Hostname DNS |
+| `api-inovahub.inovatitech.com.br` | **HTTPS 200** (Tunnel + Laravel + PHP 8.4) |
 | Tunnel nome | `inovahub` |
 | Service origem | `http://127.0.0.1:8088` |
 | SSL edge | Full (origem HTTP via tunnel) |
@@ -26,12 +26,12 @@
 | Item | Status |
 |------|--------|
 | Path | `/opt/inovahub` |
-| `cloudflared.service` | Instalado com token do tunnel `inovahub` (active) |
-| Compose prod | `docker-compose.prod.yml` + `.env.prod` |
+| `cloudflared.service` | Active (tunnel `inovahub`) |
+| Compose prod | OK |
 | Containers | `inovahub-app`, `inovahub-postgres`, `inovahub-redis` |
-| `composer install` | OK (vendor reinstalado no container) |
-| `php artisan migrate --force` | OK (users/cache/jobs) |
-| `curl http://127.0.0.1:8088/` | **200** — APP_KEY corrigida (`base64:…`) |
+| `composer install` | OK |
+| `php artisan migrate --force` | OK |
+| `curl http://127.0.0.1:8088/` | **200** |
 
 ## Local (Docker Desktop)
 
@@ -43,6 +43,6 @@
 
 ## Próximo passo operacional
 
-1. Validar público: `curl -I https://inovahub.inovatitech.com.br` e `api-inovahub` (não 502/530).
-2. Se NXDOMAIN no Hub: recriar CNAME no tunnel `inovahub`.
-3. Seguir MVP (auth/tenancy) em `docs/15-day-by-day-mvp.md`.
+1. Recriar DNS `inovahub` (CNAME Proxied → mesmo tunnel de `api-inovahub`).
+2. `curl -I https://inovahub.inovatitech.com.br` → 200.
+3. Continuar MVP (auth/tenancy).

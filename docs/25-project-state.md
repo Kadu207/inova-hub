@@ -1,6 +1,6 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-22  
+**Última atualização:** 2026-07-22 (origem local VPS HTTP 200)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
 
 ## Repositórios
@@ -31,7 +31,7 @@
 | Containers | `inovahub-app`, `inovahub-postgres`, `inovahub-redis` |
 | `composer install` | OK (vendor reinstalado no container) |
 | `php artisan migrate --force` | OK (users/cache/jobs) |
-| `curl http://127.0.0.1:8088/` | **500** — porta OK; APP_KEY sem prefixo `base64:` e/ou `.env.prod` sem `DB_PASSWORD` |
+| `curl http://127.0.0.1:8088/` | **200** — APP_KEY corrigida (`base64:…`) |
 
 ## Local (Docker Desktop)
 
@@ -43,7 +43,6 @@
 
 ## Próximo passo operacional
 
-1. Corrigir `APP_KEY=base64:...` em `app/.env` e `.env.prod` (regenerar se vazou).
-2. Garantir `DB_PASSWORD=` preenchido no `.env.prod` (compose exige).
-3. Ver `storage/logs/laravel.log` e retestar `curl` → 200.
-4. Confirmar DNS CNAME + Tunnel → HTTPS sem 502/530.
+1. Validar público: `curl -I https://inovahub.inovatitech.com.br` e `api-inovahub` (não 502/530).
+2. Se NXDOMAIN no Hub: recriar CNAME no tunnel `inovahub`.
+3. Seguir MVP (auth/tenancy) em `docs/15-day-by-day-mvp.md`.

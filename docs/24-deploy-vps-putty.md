@@ -70,9 +70,9 @@ Ou com OpenSSH (se tiver):
 scp -r docker-compose.prod.yml .env.prod.example infra app gestaoti@128.140.77.31:/opt/inovahub/
 ```
 
-**Não copie** `app/.env` local nem `app/vendor` se for grande — na VPS o Composer roda no build/container. Se copiar `vendor`, ok para ir mais rápido, mas a imagem já pode instalar deps no entrypoint se configurado.
+**Não copie `app/vendor` pelo pscp** — na VPS rode `composer install` no container (o entrypoint também tenta reparar vendor incompleto).
 
-Sugestão mínima a enviar: `docker-compose.prod.yml`, `infra/`, `app/` (código; `vendor` opcional).
+Sugestão mínima a enviar: `docker-compose.prod.yml`, `infra/`, `app/` **sem** `vendor/` e **sem** `.env`.
 
 ---
 

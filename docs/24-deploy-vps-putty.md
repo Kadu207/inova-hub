@@ -41,16 +41,14 @@ Se faltar Docker: instalar [docs oficiais](https://docs.docker.com/engine/instal
 
 O projeto local ainda pode **não** ter remote GitHub. Escolha **A** ou **B**.
 
-### A — Git clone (quando o repo existir)
-
-No GitHub/GitLab: crie o repo, faça push do PC, depois na VPS:
+### A — Git clone (recomendado)
 
 ```bash
 sudo mkdir -p /opt/inovahub
 sudo chown "$USER:$USER" /opt/inovahub
 cd /opt/inovahub
-git clone <URL_DO_REPO> .
-# se o código estiver em subpasta do monorepo, ajuste o path
+git clone https://github.com/Kadu207/inova-hub.git .
+# espelho GitLab: https://gitlab.com/Kadu207/inova-hub.git
 ```
 
 ### B — Copiar deste Windows com `pscp` (sem Git remoto)

@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: inova_hub_test
+          POSTGRES_USER: inova
+          POSTGRES_PASSWORD: secret
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U inova -d inova_hub_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_pgsql, redis
+          coverage: none
+      - name: Install Composer deps
+        run: composer install --no-interaction --prefer-dist
+      - name: Copy env
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+      - name: Run Pint (dry)
+        run: vendor/bin/pint --test
+        continue-on-error: true
+      - name: Run tests
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: inova_hub_test
+          DB_USERNAME: inova
+          DB_PASSWORD: secret
+        run: php artisan test

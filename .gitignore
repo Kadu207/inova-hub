@@ -1,0 +1,21 @@
+﻿# Inova Hub / Finova
+.firecrawl/
+.cursor/
+.env
+.env.*
+!.env.example
+!.env.prod.example
+.env.prod
+
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# Laravel
+/app/vendor/
+/app/node_modules/
+/app/.env
+/app/storage/*.key
+/app/public/storage
+/app/database/*.sqlite

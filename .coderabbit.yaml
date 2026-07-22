@@ -1,0 +1,36 @@
+# language: pt-BR
+reviews:
+  profile: assertive
+  request_changes_workflow: true
+  high_level_summary: true
+  poem: false
+  review_status: true
+  collapse_walkthrough: true
+  path_filters:
+    - "!**/*.lock"
+    - "!**/.firecrawl/**"
+    - "!**/vendor/**"
+    - "!**/node_modules/**"
+  path_instructions:
+    - path: "app/**"
+      instructions: |
+        Exigir isolamento por organization_id/tenant em queries de negócio (Global Scope + Policy).
+        Considerar RLS Postgres (app.current_org) como segunda barreira.
+        Webhooks devem ser idempotentes e despachar Jobs (EDD), sem lógica pesada no controller.
+        Sem secrets hardcoded. Preferir TDD: mudanças de regra com testes Pest.
+        UI Blade/front: mobile-first, sem overflow-x, tabelas com alternativa cards no mobile.
+    - path: "tests/**"
+      instructions: |
+        Testes devem cobrir regras BR-xxx e cenários IDOR multi-tenant quando aplicável.
+    - path: "docs/business-rules/**"
+      instructions: |
+        Mudanças de regra devem ter ID BR-xxx e referência a testes.
+    - path: "docs/22-responsive-ui.md"
+      instructions: |
+        Qualquer PR de UI deve respeitar DoD de viewports deste documento.
+chat:
+  auto_reply: true
+summary:
+  post_comments: true
+knowledge_base:
+  opt_out: false

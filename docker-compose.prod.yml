@@ -1,0 +1,71 @@
+# Produção VPS — Tunnel Cloudflare → 127.0.0.1:8088
+# Uso: docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+name: inovahub
+
+services:
+  postgres:
+    container_name: inovahub-postgres
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-inova_hub}
+      POSTGRES_USER: ${DB_USERNAME:-inova}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env.prod}
+    # Sem publish na internet — só rede Docker
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-inova} -d ${DB_DATABASE:-inova_hub}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    container_name: inovahub-redis
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  app:
+    container_name: inovahub-app
+    build:
+      context: ./app
+      dockerfile: ../infra/Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "127.0.0.1:8088:80"
+    entrypoint: ["/bin/bash", "/entrypoint.sh"]
+    volumes:
+      - ./app:/var/www/html
+      - ./infra/entrypoint.sh:/entrypoint.sh:ro
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: ${APP_URL:-https://inovahub.inovatitech.com.br}
+      APP_KEY: ${APP_KEY:?set APP_KEY in .env.prod}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-inova_hub}
+      DB_USERNAME: ${DB_USERNAME:-inova}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+      TRUSTED_PROXIES: "*"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+    name: inovahub_postgres_data

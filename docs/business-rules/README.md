@@ -1,0 +1,18 @@
+# Catálogo de regras de negócio — Inova Hub / Finova
+
+Toda regra tem ID `BR-xxx`. Mudança = atualizar este índice + arquivo + teste Pest.
+
+| ID | Título | Domínio | Teste |
+|----|--------|---------|-------|
+| BR-001 | Tenant isolation | Segurança | `tests/Feature/TenantIsolationTest.php` (a criar) |
+| BR-002 | Vincular WhatsApp por OTP | Onboarding | a criar |
+| BR-003 | Lançamento financeiro por NL | Finanças | a criar |
+| BR-004 | Confirmação se confiança baixa | Finanças/IA | a criar |
+| BR-005 | Open Finance somente leitura | Pluggy | a criar |
+| BR-006 | Revogar OF apaga dados do item | Pluggy/LGPD | a criar |
+| BR-007 | Cancelamento self-service Asaas | Billing | a criar |
+| BR-008 | Export e exclusão de conta | LGPD | a criar |
+| BR-009 | Papéis owner/member/viewer | Equipe | a criar |
+| BR-010 | Idempotência de webhooks | EDD | a criar |
+
+Detalhes em arquivos `BR-00x-*.md` nesta pasta.

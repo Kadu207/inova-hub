@@ -1,0 +1,30 @@
+{
+  "product": "Inova Hub / Finova",
+  "competitor": "Meu Assessor",
+  "status": "awaiting_authenticated_sniff",
+  "generated_at": "2026-07-21",
+  "public_screens": [
+    {"name": "Landing", "url": "https://meuassessor.com"},
+    {"name": "Termos", "url": "https://meuassessor.com/pages/termos-de-uso"},
+    {"name": "Privacidade", "url": "https://meuassessor.com/pages/politica-de-privacidade"},
+    {"name": "Login", "url": "https://app.meuassessor.com/login"},
+    {"name": "Cadastro", "url": "https://app.meuassessor.com/cadastro"},
+    {"name": "AdminLogin", "url": "https://admin.meuassessor.com", "do_not_probe": true},
+    {"name": "BeneficiosWP", "url": "https://beneficios.meuassessor.com/hello-world"}
+  ],
+  "authenticated_screens": [],
+  "inova_hub_mvp_routes": [
+    "/",
+    "/login",
+    "/register",
+    "/onboarding",
+    "/app",
+    "/app/transactions",
+    "/app/calendar",
+    "/app/tasks",
+    "/app/connections",
+    "/app/members",
+    "/app/settings",
+    "/app/billing"
+  ]
+}

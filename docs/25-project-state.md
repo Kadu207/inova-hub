@@ -31,7 +31,7 @@
 | Containers | `inovahub-app`, `inovahub-postgres`, `inovahub-redis` |
 | `composer install` | OK (vendor reinstalado no container) |
 | `php artisan migrate --force` | OK (users/cache/jobs) |
-| `curl http://127.0.0.1:8088/` | **000** — pendente (app/porta não respondendo) |
+| `curl http://127.0.0.1:8088/` | **500** — porta OK; APP_KEY sem prefixo `base64:` e/ou `.env.prod` sem `DB_PASSWORD` |
 
 ## Local (Docker Desktop)
 
@@ -43,6 +43,7 @@
 
 ## Próximo passo operacional
 
-1. Na VPS: diagnosticar por que `:8088` retorna `000` (container Up? port publish? Apache logs?).
-2. Confirmar DNS CNAME `inovahub` + `api-inovahub` no tunnel.
-3. `curl -I https://inovahub.inovatitech.com.br` → não 502/530.
+1. Corrigir `APP_KEY=base64:...` em `app/.env` e `.env.prod` (regenerar se vazou).
+2. Garantir `DB_PASSWORD=` preenchido no `.env.prod` (compose exige).
+3. Ver `storage/logs/laravel.log` e retestar `curl` → 200.
+4. Confirmar DNS CNAME + Tunnel → HTTPS sem 502/530.

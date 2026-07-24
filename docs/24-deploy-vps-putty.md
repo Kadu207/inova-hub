@@ -190,18 +190,33 @@ Deploy inicial foi via `pscp`. Para passar a usar Git **sem apagar** `.env`:
 
 ```bash
 cd /opt
-sudo mv inovahub inovahub.bak
-sudo -u gestaoti git clone https://github.com/Kadu207/inova-hub.git inovahub
-# preservar secrets
-sudo cp inovahub.bak/.env.prod inovahub/.env.prod
-sudo cp inovahub.bak/app/.env inovahub/app/.env
-# volumes Docker: se o compose usava caminhos relativos, recreate
+
+# 1) Backup (se ainda não fez)
+sudo mv inovahub inovahub.bak   # ignore se já existir inovahub.bak
+
+# 2) Clone como root (gestaoti não consegue criar pasta em /opt)
+sudo git clone https://github.com/Kadu207/inova-hub.git inovahub
+sudo chown -R gestaoti:gestaoti /opt/inovahub
+
+# 3) Preservar secrets do backup
+sudo cp /opt/inovahub.bak/.env.prod /opt/inovahub/.env.prod
+sudo cp /opt/inovahub.bak/app/.env /opt/inovahub/app/.env
+sudo chown gestaoti:gestaoti /opt/inovahub/.env.prod /opt/inovahub/app/.env
+
+# 4) Subir stack do path novo
 cd /opt/inovahub
 docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
 docker compose -f docker-compose.prod.yml --env-file .env.prod exec app composer install --no-interaction --prefer-dist --optimize-autoloader
 docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan migrate --force
 docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan db:seed --force
 curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8088/
+```
+
+Se o clone parcial falhou antes, confira:
+
+```bash
+ls -la /opt | grep inovahub
+# deve existir inovahub.bak; inovahub só após o clone com sudo
 ```
 
 Atualizações seguintes:

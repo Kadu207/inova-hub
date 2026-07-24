@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthSessionController;
+use App\Http\Controllers\Hub\WhatsappLinkController;
 use App\Http\Controllers\HubHomeController;
 use App\Http\Middleware\SetTenantContext;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +23,9 @@ Route::post('/logout', [AuthSessionController::class, 'destroy'])
     ->middleware('auth')
     ->name('logout');
 
-Route::get('/hub', HubHomeController::class)
-    ->middleware(['auth', SetTenantContext::class])
-    ->name('hub.home');
+Route::middleware(['auth', SetTenantContext::class])->prefix('hub')->group(function () {
+    Route::get('/', HubHomeController::class)->name('hub.home');
+    Route::get('/whatsapp', [WhatsappLinkController::class, 'show'])->name('hub.whatsapp');
+    Route::post('/whatsapp/otp', [WhatsappLinkController::class, 'issue'])->name('hub.whatsapp.otp');
+    Route::post('/whatsapp/confirm-dev', [WhatsappLinkController::class, 'confirmDev'])->name('hub.whatsapp.confirm-dev');
+});

@@ -13,6 +13,8 @@
     <div class="card">
         <p class="sub" style="margin-top:0;">Olá, {{ $user->name }}.</p>
         <p>Organização ativa: <strong>{{ $organizationId ?? '—' }}</strong></p>
-        <p class="sub">Próximo: vincular WhatsApp (Finova) — D10.</p>
+        <p style="margin-top:1rem;">
+            <a class="btn" href="{{ route('hub.whatsapp') }}">Vincular WhatsApp (Finova)</a>
+        </p>
     </div>
 @endsection

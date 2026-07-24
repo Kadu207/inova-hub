@@ -50,6 +50,7 @@ docs/           # Snirf, PRD, arquitetura, roadmap
 25. [**Deploy VPS via PuTTY**](docs/24-deploy-vps-putty.md) — Compose + Tunnel `:8088`
 26. [**Estado do projeto (memória)**](docs/25-project-state.md) — atualizar para não alucinar
 27. [**DNS Hub passo a passo**](docs/26-dns-hub-step-by-step.md) — fechar D06 NXDOMAIN
+28. [**Meta WhatsApp / Finova**](docs/27-meta-whatsapp-setup.md) — WABA + tokens
 
 ## Decisões MVP
 

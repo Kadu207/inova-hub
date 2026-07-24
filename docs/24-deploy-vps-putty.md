@@ -184,16 +184,34 @@ docker logs inovahub-app --tail 50
 
 ---
 
-## 6) Atualizar depois (git)
+## Sync código na VPS (quando `/opt/inovahub` não tem `.git`)
+
+Deploy inicial foi via `pscp`. Para passar a usar Git **sem apagar** `.env`:
+
+```bash
+cd /opt
+sudo mv inovahub inovahub.bak
+sudo -u gestaoti git clone https://github.com/Kadu207/inova-hub.git inovahub
+# preservar secrets
+sudo cp inovahub.bak/.env.prod inovahub/.env.prod
+sudo cp inovahub.bak/app/.env inovahub/app/.env
+# volumes Docker: se o compose usava caminhos relativos, recreate
+cd /opt/inovahub
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec app composer install --no-interaction --prefer-dist --optimize-autoloader
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan migrate --force
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan db:seed --force
+curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:8088/
+```
+
+Atualizações seguintes:
 
 ```bash
 cd /opt/inovahub
-git pull
-docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
-docker exec inovahub-app php artisan migrate --force
+git pull origin main
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec app composer install --no-interaction
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan migrate --force
 ```
-
-Com `pscp`: reenvie só `app/` e `infra/` e rode o `up -d --build` de novo.
 
 ---
 

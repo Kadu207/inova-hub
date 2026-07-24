@@ -1,45 +1,31 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-24 (D08 multi-tenant no código; Hub DNS ainda NXDOMAIN)  
+**Última atualização:** 2026-07-24 (Hub HTTPS 200; D09 Auth no código; VPS sem `.git`)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
-
-## Repositórios
-
-| Item | Valor |
-|------|-------|
-| GitHub | https://github.com/Kadu207/inova-hub |
-| GitLab | https://gitlab.com/Kadu207/inova-hub |
-| Branch | `main` |
 
 ## Cloudflare / DNS
 
-| Host | Status conhecido |
-|------|------------------|
-| `inovahub.inovatitech.com.br` | **NXDOMAIN** — falta CNAME/Public Hostname `inovahub` (guia: `docs/26-dns-hub-step-by-step.md`) |
-| `api-inovahub.inovatitech.com.br` | **HTTPS 200** (Tunnel + Laravel) ✅ |
-| Tunnel nome | `inovahub` |
-| Service origem | `http://127.0.0.1:8088` |
+| Host | Status |
+|------|--------|
+| `inovahub.inovatitech.com.br` | **HTTPS 200** ✅ D06 fechado |
+| `api-inovahub.inovatitech.com.br` | **HTTPS 200** ✅ |
 
-## VPS (`128.140.77.31`)
+## VPS
 
 | Item | Status |
 |------|--------|
-| Path | `/opt/inovahub` |
-| Tunnel / `:8088` | OK · migrate base OK |
-| D08 migrations | **pendente na VPS** (`git pull` + `migrate`) |
+| `/opt/inovahub` | Sem `.git` (pscp) — **precisa clone** preservando `.env` |
+| D08/D09 na VPS | Pendente até sync git |
 
-## D08 (código)
+## Código (`main`)
 
 | Item | Status |
 |------|--------|
-| `organizations` / `memberships` / `tenant_notes` | Migrations + models |
-| `TenantContext` + Global Scope + Policies | OK |
-| Middleware alias `tenant` | OK |
-| Seed `admin@inovahub.test` | OK |
-| `TenantIsolationTest` | **4 passed** |
+| D08 multi-tenant | OK · testes OK |
+| D09 Auth Hub | Sanctum + register/login/logout + rate limit · `AuthFlowTest` 3 passed |
 
 ## Próximo passo operacional
 
-1. Operador: fechar DNS Hub (`docs/26-dns-hub-step-by-step.md`) → `curl -I` 200.
-2. VPS: `git pull` + `docker compose … exec app php artisan migrate --force` + seed.
-3. Agente: D09 Auth Hub (Sanctum register/login).
+1. Operador: sync git na VPS (comandos abaixo / `docs/24-deploy-vps-putty.md`).
+2. Validar https://inovahub.inovatitech.com.br/register e /login.
+3. D10 OTP WhatsApp (precisa Meta).

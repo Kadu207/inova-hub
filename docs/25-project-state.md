@@ -14,8 +14,8 @@
 
 | Item | Status |
 |------|--------|
-| `/opt/inovahub` | Sem `.git` (pscp) — **precisa clone** preservando `.env` |
-| D08/D09 na VPS | Pendente até sync git |
+| `/opt/inovahub` | **Git OK** · migrations D08/D09 no disco |
+| D08/D09 na VPS | **Pendente** — `composer install` incompleto (`vendor` ausente → curl `000`) |
 
 ## Código (`main`)
 

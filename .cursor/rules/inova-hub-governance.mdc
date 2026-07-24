@@ -1,0 +1,65 @@
+---
+description: SDD TDD EDD Spec Kit CodeRabbit e squads Inova Hub
+alwaysApply: true
+---
+
+# Inova Hub / Finova — governança
+
+## Stack
+
+- Laravel (PHP 8.4+) + **PostgreSQL 16 multi-tenant** + Redis + Horizon
+- Pest + Pint; CI bloqueia merge com falha
+- Domínio: `inovahub.inovatitech.com.br` · VPS `128.140.77.31`
+- UI: **100% responsiva** (mobile-first) — `docs/22-responsive-ui.md`
+
+## SDD (Spec-Driven)
+
+- Feature nova: atualizar/criar spec em `.specify/` ou task do `docs/15-day-by-day-mvp.md`
+- Não implementar regra de negócio só “de cabeça” sem aceite escrito
+
+## TDD
+
+- Regra de negócio → teste Pest Red → implementação Green → refactor
+- Preferir testes de domínio/feature; HTTP para contratos de webhook
+- Toda mudança de dados tenant inclui teste IDOR
+
+## EDD (Event-Driven)
+
+- Meta WhatsApp, Pluggy, Asaas entram como webhooks → Jobs na fila
+- Processamento idempotente (`wamid`, event id Pluggy/Asaas)
+- Nunca lógica pesada síncrona no controller do webhook
+
+## Multi-tenant
+
+- Shared DB + `organization_id` + Global Scope + Policy + **RLS**
+- Ver `docs/23-multitenant-database.md` e BR-001
+- Jobs sempre carregam `organization_id`
+
+## Segurança (L1–L11)
+
+- Documento: `docs/21-security-layers.md`
+- Sem secrets no git; admin interno nunca público
+- Webhooks assinados; LGPD export/delete/consent OF
+- Checklist de PR de segurança obrigatório
+
+## UI responsiva
+
+- Documento: `docs/22-responsive-ui.md`
+- DoD: testar 360 / 768 / 1280; sem overflow-x; tabelas→cards no mobile
+- Viewport meta obrigatório
+
+## Squads
+
+- **Squad A** (build/QA): `/pesquisador` `/roteirista` `/estrutural` `/orquestrador` `/implementador` `/testador` `/validador` `/finalizador`
+- **Squad B** (pós): `/suporte` `/incidente` `/sre` `/produto` `/lgpd` `/qa-pos`
+- Detalhes: `docs/18-agent-squads.md`
+
+## CodeRabbit
+
+- Respeitar `.coderabbit.yaml`
+- Blockers de segurança/tenant/testes/responsividade ausentes devem ser corrigidos antes do merge
+
+## Regras de negócio
+
+- Catálogo em `docs/business-rules/`
+- IDs `BR-xxx`; toda mudança atualiza catálogo + teste

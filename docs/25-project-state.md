@@ -1,31 +1,35 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-24 (Hub HTTPS 200; D09 Auth no código; VPS sem `.git`)  
+**Última atualização:** 2026-07-24 (VPS com Git + D08/D09 migrados; Hub login HTTPS 200)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
 
 ## Cloudflare / DNS
 
 | Host | Status |
 |------|--------|
-| `inovahub.inovatitech.com.br` | **HTTPS 200** ✅ D06 fechado |
+| `inovahub.inovatitech.com.br` | **HTTPS 200** ✅ |
 | `api-inovahub.inovatitech.com.br` | **HTTPS 200** ✅ |
+| Tunnel | `inovahub` → `http://127.0.0.1:8088` |
 
-## VPS
-
-| Item | Status |
-|------|--------|
-| `/opt/inovahub` | **Git OK** · migrations D08/D09 no disco |
-| D08/D09 na VPS | **Pendente** — `composer install` incompleto (`vendor` ausente → curl `000`) |
-
-## Código (`main`)
+## VPS (`/opt/inovahub`)
 
 | Item | Status |
 |------|--------|
-| D08 multi-tenant | OK · testes OK |
-| D09 Auth Hub | Sanctum + register/login/logout + rate limit · `AuthFlowTest` 3 passed |
+| Git | OK (`origin` GitHub) |
+| `composer install` | OK (Sanctum incluso) |
+| Migrate D08/D09 | OK (orgs/memberships/notes + personal_access_tokens) |
+| Seed | OK |
+| `curl :8088` | **302** (redirect auth) ✅ |
+| `https://…/login` | **HTTP 200** ✅ |
 
-## Próximo passo operacional
+## Código
 
-1. Operador: sync git na VPS (comandos abaixo / `docs/24-deploy-vps-putty.md`).
-2. Validar https://inovahub.inovatitech.com.br/register e /login.
-3. D10 OTP WhatsApp (precisa Meta).
+| Item | Status |
+|------|--------|
+| D08 multi-tenant | Produção |
+| D09 Auth Hub | Produção (register/login/logout) |
+
+## Próximo passo
+
+1. Operador: testar no browser `/register` e `/login`.
+2. Agente/Operador: **D10** OTP WhatsApp (precisa Meta WABA / tokens).

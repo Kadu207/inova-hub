@@ -214,13 +214,13 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Fluxos D08–D13.
 - **Decisões:** Lista de bugs P0 vs P1.
 - **Tarefas:**
-  - [ ] Testes feature auth + webhook signature
-  - [ ] Checklist Meta produção (se KYC ok)
-  - [ ] Atualizar doc 14
+  - [x] Testes feature auth + webhook signature
+  - [x] Checklist Meta produção (se KYC ok)
+  - [x] Atualizar doc 14
 - **Entregáveis:** Testes verdes; notas de risco Meta.
 - **Donos:** Ambos
 - **Dependências:** Semana 2
-- **Critério de pronto:** Suite auth/webhook passa; Finova estável em número de teste.
+- **Critério de pronto:** Suite auth/webhook passa; Finova estável em número de teste. (suite **23 passed**; E2E Zap pendente tokens Meta — [28](28-week2-retro.md))
 
 ---
 

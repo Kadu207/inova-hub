@@ -21,3 +21,5 @@ Thumbs.db
 /app/storage/*.key
 /app/public/storage
 /app/database/*.sqlite
+
+Meu assessor*.txt

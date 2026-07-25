@@ -1,6 +1,6 @@
 # 14 — Checklist de pré-requisitos (Inova Hub / Finova)
 
-**Atualizado:** 21/07/2026  
+**Atualizado:** 25/07/2026 (fim Semana 2 — ver [28-week2-retro.md](28-week2-retro.md))  
 **Donos:** Operador = você · Agente = Cursor  
 **Regra:** não colar secrets neste arquivo — só status e nomes de variáveis.
 
@@ -24,21 +24,21 @@
 | Item | Status | Valor / nota |
 |------|--------|--------------|
 | Domínio | [x] Registrado | `inovahub.inovatitech.com.br` |
-| Cloudflare DNS | [x] A Proxied OK | Resolve via CF anycast — ver [19-dns-cloudflare.md](19-dns-cloudflare.md) |
-| VPS Hetzner | [x] IP conhecido | IP: `128.140.77.31` · **80/443 já em uso** → vhost / 8443+Origin Rule / Tunnel |
-| SSH | [ ] Chave | User: _______________ |
+| Cloudflare DNS | [x] Tunnel `inovahub` | Hub + API HTTPS **200** |
+| VPS Hetzner | [x] IP conhecido | `128.140.77.31` · **80/443 outros projetos** → Tunnel → `127.0.0.1:8088` |
+| SSH | [x] PuTTY | User: `gestaoti` · path `/opt/inovahub` |
 
 ### DNS Cloudflare
 
 | Tipo | Nome | Destino | Proxy | Status |
 |------|------|---------|-------|--------|
-| A/CNAME | `inovahub` | CF / Tunnel | Proxied | [x] DNS+TLS edge |
-| A/CNAME | `api-inovahub` | CF / Tunnel | Proxied | [ ] criar (substituir `api.inovahub`) |
-| A | `api.inovahub` | — | — | [x] DNS ok, **TLS quebrado** — remover |
+| CNAME | `inovahub` | CF Tunnel | Proxied | [x] HTTPS 200 |
+| CNAME | `api-inovahub` | CF Tunnel | Proxied | [x] HTTPS 200 |
+| A/CNAME | `api.inovahub` | — | — | [x] **não usar** (Universal SSL Free não cobre 2 níveis) |
 | TXT | SPF / DKIM Resend | conforme Resend | DNS only | [ ] |
 
-SSL Cloudflare: **Full** agora → **Full (strict)** após cert na origem — [ ]  
-Origem (80/443 ocupadas): escolher A/B/C em [19-dns-cloudflare.md](19-dns-cloudflare.md) — [ ]
+SSL Cloudflare: edge via Tunnel — [x]  
+Origem: Tunnel only (não disputa 80/443) — [x]
 
 ---
 
@@ -48,13 +48,13 @@ Origem (80/443 ocupadas): escolher A/B/C em [19-dns-cloudflare.md](19-dns-cloudf
 
 | Item | Status | Ref |
 |------|--------|-----|
-| Meta Business Manager | [ ] | |
+| Meta Business Manager | [ ] | Operador |
 | App em developers.facebook.com | [ ] | App ID: ___ |
 | WhatsApp product + WABA | [ ] | |
-| Número dedicado (não pessoal) | [ ] | +55 ___ |
+| Número dedicado (não pessoal) | [ ] | sandbox OK para D10–D14 |
 | Display name Finova | [ ] | |
-| Webhook `https://api.<dominio>/webhooks/whatsapp` | [ ] | |
-| Verify token + App Secret no `.env` | [ ] | `META_APP_SECRET`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_ID` |
+| Webhook | [ ] código ready | `https://api-inovahub.inovatitech.com.br/webhooks/whatsapp` |
+| Verify token + secrets no `.env` | [ ] | `META_APP_SECRET`, `WHATSAPP_TOKEN`, `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_VERIFY_TOKEN` — guia [27](27-meta-whatsapp-setup.md) |
 
 ### 2.2 Pluggy (bancos Open Finance)
 
@@ -63,7 +63,7 @@ Origem (80/443 ocupadas): escolher A/B/C em [19-dns-cloudflare.md](19-dns-cloudf
 | Conta Pluggy | [ ] | |
 | Application sandbox | [ ] | `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` |
 | Application production | [ ] | após KYC |
-| Webhook `https://api.<dominio>/webhooks/pluggy` | [ ] | |
+| Webhook `https://api-inovahub.inovatitech.com.br/webhooks/pluggy` | [ ] | |
 | Widget Connect no Hub | [ ] | |
 
 ### 2.3 Asaas (billing)
@@ -73,7 +73,7 @@ Origem (80/443 ocupadas): escolher A/B/C em [19-dns-cloudflare.md](19-dns-cloudf
 | Conta Asaas (CNPJ/CPF) | [ ] | |
 | API Key sandbox | [ ] | `ASAAS_API_KEY` |
 | API Key produção | [ ] | |
-| Webhook cobranças | [ ] | `https://api.<dominio>/webhooks/asaas` |
+| Webhook cobranças | [ ] | `https://api-inovahub.inovatitech.com.br/webhooks/asaas` |
 | Planos Pessoal / Família criados | [ ] | |
 
 **Stripe:** fora do MVP — [ ] (adiado P1 internacional)
@@ -82,7 +82,7 @@ Origem (80/443 ocupadas): escolher A/B/C em [19-dns-cloudflare.md](19-dns-cloudf
 
 | Conta | Status | Env vars |
 |-------|--------|----------|
-| GitHub repo privado | [ ] | |
+| GitHub / GitLab | [x] | `Kadu207/inova-hub` |
 | OpenAI ou Groq | [ ] | `OPENAI_API_KEY` / `GROQ_API_KEY` |
 | Whisper (OpenAI) | [ ] | mesma key se OpenAI |
 | Resend | [ ] | `RESEND_API_KEY` |
@@ -105,13 +105,13 @@ Origem (80/443 ocupadas): escolher A/B/C em [19-dns-cloudflare.md](19-dns-cloudf
 
 | Tarefa | Status |
 |--------|--------|
-| Docker Engine + Compose | [ ] |
-| Firewall: 22, 80, 443 only | [ ] |
-| User deploy sem root diário | [ ] |
+| Docker Engine + Compose | [x] |
+| Firewall: 22 + Tunnel (80/443 outros) | [x] parcial |
+| User deploy sem root diário | [x] `gestaoti` |
 | Swap se RAM ≤ 2 GB | [ ] |
 | Snapshot semanal | [ ] |
-| Compose: `app`, `worker`, `postgres`, `redis`, `horizon` | [ ] |
-| Healthcheck `/up` | [ ] |
+| Compose: `app`, `worker`, `postgres`, `redis` | [x] (Horizon depois) |
+| Healthcheck `/up` | [x] via Hub/API 200 |
 
 **RAM mínima recomendada:** 4 GB.
 
@@ -140,11 +140,11 @@ GOOGLE_CLIENT_SECRET=
 
 ---
 
-## 5. Caminho crítico (começar no D01)
+## 5. Caminho crítico (pós Semana 2)
 
-1. [ ] Meta WhatsApp KYC  
+1. [ ] Meta WhatsApp tokens + webhook verify (P0) — [27](27-meta-whatsapp-setup.md)  
 2. [ ] Pluggy KYC  
 3. [ ] Asaas cadastro  
-4. [ ] DNS + VPS Docker  
+4. [x] DNS + VPS Docker + Tunnel  
 
-Ver calendário completo: [15-day-by-day-mvp.md](15-day-by-day-mvp.md)
+Ver calendário: [15-day-by-day-mvp.md](15-day-by-day-mvp.md) · Retro: [28-week2-retro.md](28-week2-retro.md)

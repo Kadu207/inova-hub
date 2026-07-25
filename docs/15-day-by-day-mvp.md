@@ -188,13 +188,13 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Webhook + worker.
 - **Decisões:** Intent `help` e fallback educado; tom marca Finova.
 - **Tarefas:**
-  - [ ] Sender WhatsApp API
-  - [ ] Intent router mínimo
-  - [ ] Copy “Eu sou a Finova…”
+  - [x] Sender WhatsApp API
+  - [x] Intent router mínimo
+  - [x] Copy “Eu sou a Finova…”
 - **Entregáveis:** Bot responde no Zap.
 - **Donos:** Agente
 - **Dependências:** D11
-- **Critério de pronto:** “oi” / “ajuda” respondidos < 8s.
+- **Critério de pronto:** “oi” / “ajuda” respondidos < 8s. (código pronto; validar E2E após tokens Meta + deploy VPS)
 
 ### D13 — Painel home + sessão WhatsApp status
 

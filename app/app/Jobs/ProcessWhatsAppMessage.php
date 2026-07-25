@@ -4,7 +4,10 @@ namespace App\Jobs;
 
 use App\Models\WebhookEvent;
 use App\Services\WhatsApp\ConsumesWhatsappOtp;
+use App\Services\WhatsApp\FinovaCopy;
 use App\Services\WhatsApp\ParsesWhatsappWebhook;
+use App\Services\WhatsApp\ResolvesFinovaIntent;
+use App\Services\WhatsApp\SendsWhatsappText;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -22,8 +25,12 @@ final class ProcessWhatsAppMessage implements ShouldQueue
         public array $message,
     ) {}
 
-    public function handle(ParsesWhatsappWebhook $parser, ConsumesWhatsappOtp $consumes): void
-    {
+    public function handle(
+        ParsesWhatsappWebhook $parser,
+        ConsumesWhatsappOtp $consumes,
+        ResolvesFinovaIntent $intents,
+        SendsWhatsappText $sender,
+    ): void {
         $wamid = $this->message['wamid'];
         $from = $this->message['from'];
         $text = $this->message['text'];
@@ -43,36 +50,42 @@ final class ProcessWhatsAppMessage implements ShouldQueue
 
         try {
             $otp = $parser->extractOtpCode($text);
+            $looksLikePureOtp = preg_match('/^\s*\d{6}\s*$/', $text) === 1;
 
-            if ($otp !== null) {
-                $identity = $consumes->handle($from, $otp);
-                Log::info('whatsapp.otp_linked', [
-                    'wamid' => $wamid,
-                    'user_id' => $identity->user_id,
-                    'phone_masked' => $this->maskPhone($identity->phone_e164),
-                ]);
+            if ($otp !== null && ($looksLikePureOtp || str_contains(mb_strtolower($text), 'codigo') || str_contains(mb_strtolower($text), 'código'))) {
+                try {
+                    $identity = $consumes->handle($from, $otp);
+                    Log::info('whatsapp.otp_linked', [
+                        'wamid' => $wamid,
+                        'user_id' => $identity->user_id,
+                        'phone_masked' => $this->maskPhone($identity->phone_e164),
+                    ]);
+                    $sender->handle($from, FinovaCopy::otpLinked());
+                } catch (ValidationException $e) {
+                    if ($looksLikePureOtp) {
+                        $sender->handle($from, FinovaCopy::otpFailed());
+                        $event->update([
+                            'status' => WebhookEvent::STATUS_FAILED,
+                            'last_error' => collect($e->errors())->flatten()->first() ?? 'validation',
+                        ]);
+                        Log::notice('whatsapp.otp_failed', [
+                            'wamid' => $wamid,
+                            'phone_masked' => $this->maskPhone($from),
+                        ]);
+
+                        return;
+                    }
+
+                    $this->replyWithIntent($intents, $sender, $from, $text, $wamid);
+                }
             } else {
-                Log::info('whatsapp.message_received', [
-                    'wamid' => $wamid,
-                    'type' => $this->message['type'],
-                    'phone_masked' => $this->maskPhone($from),
-                    'has_text' => $text !== '',
-                ]);
+                $this->replyWithIntent($intents, $sender, $from, $text, $wamid);
             }
 
             $event->update([
                 'status' => WebhookEvent::STATUS_PROCESSED,
                 'processed_at' => now(),
                 'last_error' => null,
-            ]);
-        } catch (ValidationException $e) {
-            $event->update([
-                'status' => WebhookEvent::STATUS_FAILED,
-                'last_error' => collect($e->errors())->flatten()->first() ?? 'validation',
-            ]);
-            Log::notice('whatsapp.otp_failed', [
-                'wamid' => $wamid,
-                'phone_masked' => $this->maskPhone($from),
             ]);
         } catch (Throwable $e) {
             $event->update([
@@ -82,6 +95,24 @@ final class ProcessWhatsAppMessage implements ShouldQueue
 
             throw $e;
         }
+    }
+
+    private function replyWithIntent(
+        ResolvesFinovaIntent $intents,
+        SendsWhatsappText $sender,
+        string $from,
+        string $text,
+        string $wamid,
+    ): void {
+        $intent = $intents->handle($text);
+        $reply = $intents->reply($intent);
+        $sender->handle($from, $reply);
+
+        Log::info('whatsapp.intent_replied', [
+            'wamid' => $wamid,
+            'intent' => $intent->value,
+            'phone_masked' => $this->maskPhone($from),
+        ]);
     }
 
     private function maskPhone(string $phone): string

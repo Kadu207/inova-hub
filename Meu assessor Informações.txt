@@ -1,0 +1,8 @@
+Meu assessor
+
+
+Campo
+URL
+https://inovahub.inovatitech.com.br/login
+E-mail/Login: admin@inovahub.test
+Senha: password

@@ -66,6 +66,40 @@ services:
       redis:
         condition: service_healthy
 
+  worker:
+    container_name: inovahub-worker
+    build:
+      context: ./app
+      dockerfile: ../infra/Dockerfile
+    restart: unless-stopped
+    working_dir: /var/www/html
+    entrypoint: ["php", "artisan", "queue:work", "redis", "--sleep=1", "--tries=3", "--max-time=3600"]
+    volumes:
+      - ./app:/var/www/html
+    environment:
+      APP_ENV: production
+      APP_DEBUG: "false"
+      APP_URL: ${APP_URL:-https://inovahub.inovatitech.com.br}
+      APP_KEY: ${APP_KEY:?set APP_KEY in .env.prod}
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-inova_hub}
+      DB_USERNAME: ${DB_USERNAME:-inova}
+      DB_PASSWORD: ${DB_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      QUEUE_CONNECTION: redis
+      CACHE_STORE: redis
+      SESSION_DRIVER: redis
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      app:
+        condition: service_started
+
 volumes:
   postgres_data:
     name: inovahub_postgres_data

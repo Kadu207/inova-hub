@@ -51,14 +51,30 @@ openssl rand -hex 32
 
 Guarde como `WHATSAPP_VERIFY_TOKEN` (mesmo valor no Meta no passo 5).
 
-## 5) Webhook (pode ser D11 — prepare já)
+## 5) Webhook
 
 1. WhatsApp → **Configuration** → Webhook → **Edit**.
 2. Callback URL:
    `https://api-inovahub.inovatitech.com.br/webhooks/whatsapp`
 3. Verify token: o mesmo `WHATSAPP_VERIFY_TOKEN`.
 4. Inscreva o campo **messages**.
-5. Verify só funciona depois do endpoint D11 existir (GET challenge). Até lá, deixe o Hub OTP pronto (código D10).
+5. Clique **Verify and save** (o endpoint D11 já responde ao challenge GET).
+
+Teste manual do challenge:
+
+```bash
+curl -s "https://api-inovahub.inovatitech.com.br/webhooks/whatsapp?hub_mode=subscribe&hub_verify_token=SEU_VERIFY&hub_challenge=ping"
+# esperado: ping
+```
+
+Na VPS, rode o **worker** de fila (jobs WhatsApp):
+
+```bash
+cd /opt/inovahub
+git pull origin main
+docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build worker
+docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan migrate --force
+```
 
 ## 6) Colar na VPS
 

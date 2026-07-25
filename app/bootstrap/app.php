@@ -10,11 +10,17 @@ return Application::configure(basePath: dirname(__DIR__))
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
+        then: function (): void {
+            require __DIR__.'/../routes/webhooks.php';
+        },
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->trustProxies(at: '*');
         $middleware->redirectGuestsTo('/login');
         $middleware->redirectUsersTo('/hub');
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/*',
+        ]);
         $middleware->alias([
             'tenant' => \App\Http\Middleware\SetTenantContext::class,
         ]);

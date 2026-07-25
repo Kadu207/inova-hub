@@ -201,9 +201,9 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Auth + vínculo.
 - **Decisões:** Mostrar status conectado/desconectado WhatsApp.
 - **Tarefas:**
-  - [ ] Dashboard v0
-  - [ ] Card status Finova
-  - [ ] Link reenviar OTP
+  - [x] Dashboard v0
+  - [x] Card status Finova
+  - [x] Link reenviar OTP
 - **Entregáveis:** UI home.
 - **Donos:** Agente
 - **Dependências:** D10, D12

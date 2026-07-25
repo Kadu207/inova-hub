@@ -10,7 +10,7 @@
 | Hub + API HTTPS | **200** ✅ |
 | `/opt/inovahub` Git | OK |
 | D08–D11 em prod | OK (`webhook_events` + `inovahub-worker` up) |
-| D12 na VPS | **Pendente deploy** (`git pull` + restart worker/app) |
+| D12 na VPS | **Pendente deploy** (`git pull` + restart worker/app) — código em `main` `512faaf` |
 
 ## Código
 

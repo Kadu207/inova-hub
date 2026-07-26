@@ -362,12 +362,12 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 ### D25 — Sync saldos, extratos, cartões
 
 - **Requisitos:** Item conectado.
-- **Decisões:** Sync periódico (Horizon schedule) + on-demand.
+- **Decisões:** Sync periódico (`pluggy:sync-items` hourly) + on-demand no Hub.
 - **Tarefas:**
-  - [ ] Sync accounts/credit cards
-  - [ ] Sync transactions
-  - [ ] UI listar contas no Hub
-- **Entregáveis:** Contas visíveis no Hub.
+  - [x] Sync accounts/credit cards (via `SyncsPluggyItem`)
+  - [x] Sync transactions
+  - [x] UI listar contas + extrato no Hub
+- **Entregáveis:** Contas visíveis no Hub (`/hub/connections` + extrato por conta).
 - **Donos:** Agente
 - **Dependências:** D24
 - **Critério de pronto:** Saldo e ≥1 transação sandbox visíveis.

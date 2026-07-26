@@ -8,9 +8,30 @@
         <a class="btn btn-ghost" href="{{ route('hub.home') }}" style="width:auto;margin:0;padding:0 1rem;">Início</a>
     </div>
 
+    @if (session('status'))
+        <p class="sub" role="status" style="margin:0 0 var(--space);">{{ session('status') }}</p>
+    @endif
+
     <div class="card">
         <p class="sub" style="margin-top:0;">Open Finance (Pluggy) — somente leitura</p>
-        <p>Conecte um banco sandbox para a Finova e o Hub consultarem saldo e extrato. Não pedimos senha bancária no Inova Hub; o consentimento fica no widget Pluggy.</p>
+        <p>Conecte um banco sandbox para ver saldos e extratos. O consentimento fica no widget Pluggy.</p>
+
+        <div class="totals" style="margin-top:1rem;">
+            <div>
+                <p class="sub" style="margin:0;">Saldo total OF</p>
+                <p class="total-value {{ $totalBalanceCents >= 0 ? 'income' : 'expense' }}">
+                    R$ {{ number_format($totalBalanceCents / 100, 2, ',', '.') }}
+                </p>
+            </div>
+            <div>
+                <p class="sub" style="margin:0;">Conexões</p>
+                <p class="total-value">{{ $items->count() }}</p>
+            </div>
+            <div>
+                <p class="sub" style="margin:0;">Contas</p>
+                <p class="total-value">{{ $items->sum('accounts_count') }}</p>
+            </div>
+        </div>
 
         @if (! $configured)
             <p class="errors" style="margin-top:1rem;">Pluggy não configurado. Defina <code>PLUGGY_CLIENT_ID</code> e <code>PLUGGY_CLIENT_SECRET</code>.</p>
@@ -20,20 +41,43 @@
         @endif
     </div>
 
-    <div class="card" style="margin-top:var(--space);">
-        <p class="sub" style="margin-top:0;">Conexões desta organização</p>
-        @forelse ($items as $item)
-            <div class="tx-row" style="margin-top:0.75rem;">
+    @forelse ($items as $item)
+        <div class="card" style="margin-top:var(--space);">
+            <div class="tx-row">
                 <div>
                     <p class="tx-desc">{{ $item->connector_name ?: 'Item Pluggy' }}</p>
-                    <p class="sub" style="margin:0.25rem 0 0;">ID: {{ $item->pluggy_item_id }} · {{ $item->accounts_count }} conta(s)</p>
+                    <p class="sub" style="margin:0.25rem 0 0;">{{ $item->status }} · {{ $item->accounts_count }} conta(s)</p>
                 </div>
-                <p class="tx-amount">{{ $item->status }}</p>
+                <form method="post" action="{{ route('hub.connections.sync', $item) }}">
+                    @csrf
+                    <button type="submit" class="btn-ghost" style="width:auto;margin:0;padding:0 1rem;">Sincronizar</button>
+                </form>
             </div>
-        @empty
+
+            @forelse ($item->accounts as $account)
+                <a href="{{ route('hub.connections.accounts.show', $account) }}" class="tx-row" style="margin-top:0.85rem; text-decoration:none; color:inherit; display:flex;">
+                    <div>
+                        <p class="tx-desc">{{ $account->name ?: ($account->type ?: 'Conta') }}</p>
+                        <p class="sub" style="margin:0.25rem 0 0;">
+                            {{ $account->subtype ?: $account->type ?: '—' }}
+                            @if ($account->number)
+                                · {{ $account->number }}
+                            @endif
+                        </p>
+                    </div>
+                    <p class="tx-amount {{ $account->balance_cents >= 0 ? 'income' : 'expense' }}">
+                        R$ {{ number_format($account->balance_cents / 100, 2, ',', '.') }}
+                    </p>
+                </a>
+            @empty
+                <p class="sub" style="margin:0.85rem 0 0;">Ainda sem contas. Clique em Sincronizar ou aguarde o webhook Pluggy.</p>
+            @endforelse
+        </div>
+    @empty
+        <div class="card" style="margin-top:var(--space);">
             <p class="sub" style="margin:0;">Nenhuma conexão ainda. Use “Conectar banco” e escolha um conector de teste Pluggy.</p>
-        @endforelse
-    </div>
+        </div>
+    @endforelse
 @endsection
 
 @section('scripts')
@@ -92,7 +136,7 @@
             return;
           }
 
-          setStatus('Salvando conexão…');
+          setStatus('Salvando e sincronizando…');
 
           const saveRes = await fetch(@json(route('hub.connections.items.store')), {
             method: 'POST',

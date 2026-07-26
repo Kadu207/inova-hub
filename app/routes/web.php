@@ -37,6 +37,8 @@ Route::middleware(['auth', SetTenantContext::class])->prefix('hub')->group(funct
     Route::get('/connections', [ConnectionController::class, 'index'])->name('hub.connections.index');
     Route::post('/connections/connect-token', [ConnectionController::class, 'connectToken'])->name('hub.connections.connect-token');
     Route::post('/connections/items', [ConnectionController::class, 'storeItem'])->name('hub.connections.items.store');
+    Route::post('/connections/{item}/sync', [ConnectionController::class, 'sync'])->name('hub.connections.sync');
+    Route::get('/connections/accounts/{account}', [ConnectionController::class, 'showAccount'])->name('hub.connections.accounts.show');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('hub.transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('hub.transactions.create');

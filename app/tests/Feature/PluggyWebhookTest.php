@@ -39,6 +39,13 @@ class PluggyWebhookTest extends TestCase
         ])->assertUnauthorized();
     }
 
+    public function test_get_webhook_ping_is_reachable(): void
+    {
+        $this->get('/webhooks/pluggy')
+            ->assertOk()
+            ->assertSee('Pluggy webhook OK', false);
+    }
+
     public function test_item_created_is_idempotent_and_dispatches_sync_job(): void
     {
         Queue::fake();

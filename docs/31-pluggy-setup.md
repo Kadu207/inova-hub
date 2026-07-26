@@ -50,8 +50,11 @@ URL pública:
 https://api-inovahub.inovatitech.com.br/webhooks/pluggy
 ```
 
+- **GET no navegador** → texto `Pluggy webhook OK — use POST for events` (só healthcheck)  
+- **POST da Pluggy** → eventos reais (`item/created`, etc.)
+
 1. Dashboard Pluggy → Application → Webhooks → event **`all`** → URL acima  
-2. (Recomendado) `PLUGGY_WEBHOOK_SECRET` + header `X-Webhook-Secret` na Pluggy  
+2. (Recomendado) `PLUGGY_WEBHOOK_SECRET` + header `X-Webhook-Secret`  
 
 ```bash
 PLUGGY_WEBHOOK_SECRET=...
@@ -59,11 +62,17 @@ PLUGGY_WEBHOOK_URL=https://api-inovahub.inovatitech.com.br/webhooks/pluggy
 ```
 
 3. Connect Token envia `webhookUrl` quando a URL é HTTPS  
-4. `item/created|updated|login_succeeded` e `transactions/*` → Job `SyncPluggyItem` → `of_accounts` / `of_transactions`
+4. Após conectar no Hub, o job de sync também é disparado localmente (não depende só do webhook)
+
+## Hub saldos/extratos (D25)
+
+1. https://inovahub.inovatitech.com.br/hub/connections  
+2. Ver **Saldo total OF** + contas com saldo  
+3. Toque na conta → extrato OF  
+4. **Sincronizar** = sync on-demand (`pluggy:sync-items` também roda hourly se houver scheduler)
 
 ## Próximos dias
 
-- **D25** UI contas/saldos/extratos no Hub  
 - **D26** intents Finova bancários  
 - **D27** revogação LGPD  
 

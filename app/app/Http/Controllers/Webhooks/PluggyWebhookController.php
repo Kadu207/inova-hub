@@ -21,6 +21,12 @@ final class PluggyWebhookController extends Controller
         'transactions/updated',
     ];
 
+    public function ping(): Response
+    {
+        return response('Pluggy webhook OK — use POST for events', 200)
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
+    }
+
     public function receive(Request $request): Response
     {
         $expected = (string) config('services.pluggy.webhook_secret');

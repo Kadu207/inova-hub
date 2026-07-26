@@ -14,7 +14,7 @@ final class SyncPluggyItem implements ShouldQueue
     use Queueable;
 
     /**
-     * @param  array{eventId: string, event: string, itemId: string, clientUserId?: ?string, createdTransactionsLink?: ?string, accountId?: ?string}  $payload
+     * @param  array{eventId?: ?string, event: string, itemId: string, clientUserId?: ?string, createdTransactionsLink?: ?string, accountId?: ?string}  $payload
      */
     public function __construct(
         public array $payload,
@@ -22,25 +22,28 @@ final class SyncPluggyItem implements ShouldQueue
 
     public function handle(SyncsPluggyItem $sync): void
     {
-        $eventId = $this->payload['eventId'];
+        $eventId = $this->payload['eventId'] ?? null;
+        $event = null;
 
-        $event = WebhookEvent::query()
-            ->where('source', WebhookEvent::SOURCE_PLUGGY)
-            ->where('external_id', $eventId)
-            ->first();
+        if (is_string($eventId) && $eventId !== '') {
+            $event = WebhookEvent::query()
+                ->where('source', WebhookEvent::SOURCE_PLUGGY)
+                ->where('external_id', $eventId)
+                ->first();
 
-        if ($event === null) {
-            return;
-        }
+            if ($event === null) {
+                return;
+            }
 
-        if ($event->status === WebhookEvent::STATUS_PROCESSED) {
-            return;
+            if ($event->status === WebhookEvent::STATUS_PROCESSED) {
+                return;
+            }
         }
 
         try {
             $sync->handle($this->payload);
 
-            $event->update([
+            $event?->update([
                 'status' => WebhookEvent::STATUS_PROCESSED,
                 'processed_at' => now(),
                 'last_error' => null,
@@ -51,7 +54,7 @@ final class SyncPluggyItem implements ShouldQueue
                 'item_id' => $this->payload['itemId'],
             ]);
         } catch (Throwable $e) {
-            $event->update([
+            $event?->update([
                 'status' => WebhookEvent::STATUS_FAILED,
                 'last_error' => $e->getMessage(),
             ]);

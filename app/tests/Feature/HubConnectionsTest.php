@@ -2,13 +2,17 @@
 
 namespace Tests\Feature;
 
+use App\Jobs\SyncPluggyItem;
 use App\Models\Membership;
+use App\Models\OfAccount;
 use App\Models\OfItem;
+use App\Models\OfTransaction;
 use App\Models\Organization;
 use App\Models\User;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
@@ -70,6 +74,8 @@ class HubConnectionsTest extends TestCase
 
     public function test_widget_success_persists_of_item_and_idor_hides_other_org(): void
     {
+        Queue::fake();
+
         [$userA, $orgA] = $this->makeOwner();
         [$userB, $orgB] = $this->makeOwner('Org B');
 
@@ -88,6 +94,8 @@ class HubConnectionsTest extends TestCase
             ])->assertCreated()
             ->assertJsonPath('pluggy_item_id', 'item-pluggy-001');
 
+        Queue::assertPushed(SyncPluggyItem::class);
+
         $this->assertDatabaseHas('of_items', [
             'organization_id' => $orgA->id,
             'pluggy_item_id' => 'item-pluggy-001',
@@ -97,7 +105,7 @@ class HubConnectionsTest extends TestCase
         $this->get('/hub/connections')
             ->assertOk()
             ->assertSee('Pluggy Bank')
-            ->assertSee('item-pluggy-001');
+            ->assertSee('Saldo total OF');
 
         TenantContext::set($orgB->id);
         $this->actingAs($userB);
@@ -105,12 +113,70 @@ class HubConnectionsTest extends TestCase
 
         $this->get('/hub/connections')
             ->assertOk()
-            ->assertDontSee('item-pluggy-001');
+            ->assertDontSee('Pluggy Bank');
 
         $this->assertSame(
             0,
             OfItem::query()->where('pluggy_item_id', 'item-pluggy-001')->count()
         );
+    }
+
+    public function test_hub_shows_account_balance_and_statement(): void
+    {
+        [$user, $org] = $this->makeOwner();
+        [$otherUser, $otherOrg] = $this->makeOwner('Other');
+
+        TenantContext::set($org->id);
+        $item = OfItem::query()->create([
+            'organization_id' => $org->id,
+            'user_id' => $user->id,
+            'pluggy_item_id' => 'item-ui-1',
+            'status' => OfItem::STATUS_UPDATED,
+            'connector_name' => 'Pluggy Bank',
+            'consent_at' => now(),
+        ]);
+        $account = OfAccount::query()->create([
+            'organization_id' => $org->id,
+            'of_item_id' => $item->id,
+            'pluggy_account_id' => 'acc-ui-1',
+            'name' => 'Conta Corrente',
+            'type' => 'BANK',
+            'subtype' => 'CHECKING_ACCOUNT',
+            'currency' => 'BRL',
+            'balance_cents' => 25050,
+            'synced_at' => now(),
+        ]);
+        OfTransaction::query()->create([
+            'organization_id' => $org->id,
+            'of_account_id' => $account->id,
+            'pluggy_transaction_id' => 'tx-ui-1',
+            'amount_cents' => 1990,
+            'currency' => 'BRL',
+            'type' => OfTransaction::TYPE_EXPENSE,
+            'description' => 'Café sandbox',
+            'occurred_at' => now()->subDay(),
+        ]);
+
+        $this->actingAs($user);
+        $this->withSession(['current_organization_id' => $org->id]);
+
+        $this->get('/hub/connections')
+            ->assertOk()
+            ->assertSee('Conta Corrente')
+            ->assertSee('250,50')
+            ->assertSee('Sincronizar');
+
+        $this->get('/hub/connections/accounts/'.$account->id)
+            ->assertOk()
+            ->assertSee('Extrato')
+            ->assertSee('Café sandbox')
+            ->assertSee('19,90');
+
+        $this->actingAs($otherUser);
+        $this->withSession(['current_organization_id' => $otherOrg->id]);
+        TenantContext::set($otherOrg->id);
+
+        $this->get('/hub/connections/accounts/'.$account->id)->assertNotFound();
     }
 
     public function test_api_connect_token_requires_sanctum_and_tenant(): void

@@ -64,4 +64,11 @@ return [
         'nlu_confidence_threshold' => (float) env('FINOVA_NLU_CONFIDENCE_THRESHOLD', 0.75),
     ],
 
+    'pluggy' => [
+        'client_id' => env('PLUGGY_CLIENT_ID'),
+        'client_secret' => env('PLUGGY_CLIENT_SECRET'),
+        // Sandbox e produção usam o mesmo host; o ambiente é o da aplicação no dashboard.
+        'base_url' => env('PLUGGY_BASE_URL', 'https://api.pluggy.ai'),
+    ],
+
 ];

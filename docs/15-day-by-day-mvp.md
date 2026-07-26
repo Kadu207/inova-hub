@@ -323,12 +323,12 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 ### D22 — Conta Pluggy + adapter
 
 - **Requisitos:** Credenciais sandbox Pluggy.
-- **Decisões:** Interface `OpenFinanceProvider` → implementação Pluggy.
+- **Decisões:** Interface `OpenFinanceProvider` → implementação Pluggy (HTTP Laravel; sem SDK PHP oficial).
 - **Tarefas:**
-  - [ ] Pacote/SDK Pluggy
-  - [ ] Config `.env`
-  - [ ] Teste listar connectors sandbox
-- **Entregáveis:** Adapter conecta API sandbox.
+  - [x] Adapter `PluggyOpenFinanceProvider` (auth + list connectors)
+  - [x] Config `.env` (`PLUGGY_*`)
+  - [x] Teste listar connectors (Http::fake + `pluggy:connectors`)
+- **Entregáveis:** Adapter conecta API sandbox. (`docs/31-pluggy-setup.md`)
 - **Donos:** Ambos
 - **Dependências:** Conta Pluggy (D01+)
 - **Critério de pronto:** API sandbox responde com client credentials.

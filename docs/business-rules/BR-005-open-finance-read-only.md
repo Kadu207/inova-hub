@@ -12,4 +12,4 @@ Integração Pluggy no MVP é **somente leitura**: saldos, extratos, cartões e 
 
 ## Teste
 
-Adapter mock: métodos de pagamento não existem / lançam UnsupportedOperation.
+`PluggyOpenFinanceAdapterTest::test_br005_read_only_surface_has_no_payment_methods` — interface sem métodos de pagamento.

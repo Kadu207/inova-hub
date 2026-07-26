@@ -12,7 +12,7 @@ return new class extends Migration
         Schema::create('of_items', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignUuid('organization_id')->constrained('organizations')->cascadeOnDelete();
-            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
+            $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('pluggy_item_id', 64);
             $table->string('status', 32)->default('CREATED');
             $table->string('client_user_id', 191)->nullable();

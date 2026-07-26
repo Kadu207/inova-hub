@@ -25,4 +25,26 @@ interface OpenFinanceProvider
      * @param  array{clientUserId?: string, webhookUrl?: string, oauthRedirectUrl?: string, avoidDuplicates?: bool}  $options
      */
     public function createConnectToken(array $options = []): string;
+
+    /**
+     * @return array{id: string, status: string, connector_name: ?string, client_user_id: ?string}
+     */
+    public function getItem(string $itemId): array;
+
+    /**
+     * @return list<array{id: string, name: ?string, type: ?string, subtype: ?string, number: ?string, currency: string, balance_cents: int}>
+     */
+    public function listAccounts(string $itemId): array;
+
+    /**
+     * @return list<array{id: string, account_id: string, amount_cents: int, currency: string, type: string, description: ?string, category_suggested: ?string, occurred_at: string}>
+     */
+    public function listTransactions(string $accountId, ?string $createdAtFrom = null): array;
+
+    /**
+     * Fetch transactions from a Pluggy pagination/createdTransactionsLink URL.
+     *
+     * @return list<array{id: string, account_id: string, amount_cents: int, currency: string, type: string, description: ?string, category_suggested: ?string, occurred_at: string}>
+     */
+    public function listTransactionsFromLink(string $url): array;
 }

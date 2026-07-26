@@ -6,12 +6,19 @@ use App\Models\Concerns\BelongsToOrganization;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class OfItem extends Model
 {
     use BelongsToOrganization, HasUuids;
 
     public const STATUS_CREATED = 'CREATED';
+
+    public const STATUS_UPDATED = 'UPDATED';
+
+    public const STATUS_DELETED = 'DELETED';
+
+    public const STATUS_LOGIN_ERROR = 'LOGIN_ERROR';
 
     protected $table = 'of_items';
 
@@ -35,5 +42,10 @@ class OfItem extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function accounts(): HasMany
+    {
+        return $this->hasMany(OfAccount::class, 'of_item_id');
     }
 }

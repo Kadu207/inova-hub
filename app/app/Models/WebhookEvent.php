@@ -11,6 +11,8 @@ class WebhookEvent extends Model
 
     public const SOURCE_WHATSAPP = 'whatsapp';
 
+    public const SOURCE_PLUGGY = 'pluggy';
+
     public const STATUS_RECEIVED = 'received';
 
     public const STATUS_PROCESSED = 'processed';

@@ -70,6 +70,8 @@ return [
         // Sandbox e produção usam o mesmo host; o ambiente é o da aplicação no dashboard.
         'base_url' => env('PLUGGY_BASE_URL', 'https://api.pluggy.ai'),
         'include_sandbox' => filter_var(env('PLUGGY_INCLUDE_SANDBOX', true), FILTER_VALIDATE_BOOLEAN),
+        'webhook_secret' => env('PLUGGY_WEBHOOK_SECRET'),
+        'webhook_url' => env('PLUGGY_WEBHOOK_URL', rtrim((string) env('APP_URL', ''), '/').'/webhooks/pluggy'),
     ],
 
 ];

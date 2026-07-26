@@ -26,7 +26,7 @@
             <div class="tx-row" style="margin-top:0.75rem;">
                 <div>
                     <p class="tx-desc">{{ $item->connector_name ?: 'Item Pluggy' }}</p>
-                    <p class="sub" style="margin:0.25rem 0 0;">ID: {{ $item->pluggy_item_id }}</p>
+                    <p class="sub" style="margin:0.25rem 0 0;">ID: {{ $item->pluggy_item_id }} · {{ $item->accounts_count }} conta(s)</p>
                 </div>
                 <p class="tx-amount">{{ $item->status }}</p>
             </div>

@@ -35,15 +35,35 @@ Esperado: `Pluggy OK — N connectors` e tabela com bancos BR (inclui conectores
 | Config | `config/services.php` → `pluggy.*` |
 | BR-005 | somente leitura — sem payment initiation |
 
-## Próximos dias
-
-- **D23** ✅ Connect Token + widget Hub (`/hub/connections`)  
-- **D24** webhook `/webhooks/pluggy` + sync  
-- **D25+** contas/extratos no Hub  
-
 ## Widget (D23)
 
 1. Login no Hub → https://inovahub.inovatitech.com.br/hub/connections  
 2. **Conectar banco** → widget Pluggy (`includeSandbox=true`)  
 3. Escolher conector de teste (ex. Pluggy Bank)  
 4. Sucesso grava `of_items.pluggy_item_id`
+
+## Webhook (D24)
+
+URL pública:
+
+```text
+https://api-inovahub.inovatitech.com.br/webhooks/pluggy
+```
+
+1. Dashboard Pluggy → Application → Webhooks → event **`all`** → URL acima  
+2. (Recomendado) `PLUGGY_WEBHOOK_SECRET` + header `X-Webhook-Secret` na Pluggy  
+
+```bash
+PLUGGY_WEBHOOK_SECRET=...
+PLUGGY_WEBHOOK_URL=https://api-inovahub.inovatitech.com.br/webhooks/pluggy
+```
+
+3. Connect Token envia `webhookUrl` quando a URL é HTTPS  
+4. `item/created|updated|login_succeeded` e `transactions/*` → Job `SyncPluggyItem` → `of_accounts` / `of_transactions`
+
+## Próximos dias
+
+- **D25** UI contas/saldos/extratos no Hub  
+- **D26** intents Finova bancários  
+- **D27** revogação LGPD  
+

@@ -351,9 +351,9 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** URL pública.
 - **Decisões:** Persistir `items`, `accounts`, `transactions` OF separados de lançamentos manuais (com link/merge depois).
 - **Tarefas:**
-  - [ ] `POST /webhooks/pluggy`
-  - [ ] Jobs sync
-  - [ ] Migrations OF
+  - [x] `POST /webhooks/pluggy` (secret header opcional)
+  - [x] Job `SyncPluggyItem`
+  - [x] Migrations OF (`of_items` fix user_id + `of_accounts` / `of_transactions`)
 - **Entregáveis:** Dados sandbox no Postgres.
 - **Donos:** Agente
 - **Dependências:** D23, D06

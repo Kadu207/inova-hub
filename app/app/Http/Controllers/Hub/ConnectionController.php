@@ -18,6 +18,7 @@ final class ConnectionController
             && filled(config('services.pluggy.client_secret'));
 
         $items = OfItem::query()
+            ->withCount('accounts')
             ->orderByDesc('created_at')
             ->limit(50)
             ->get();
@@ -41,11 +42,18 @@ final class ConnectionController
 
         $clientUserId = sprintf('org:%s:user:%s', $orgId, $user->id);
 
+        $options = [
+            'clientUserId' => $clientUserId,
+            'avoidDuplicates' => true,
+        ];
+
+        $webhookUrl = (string) config('services.pluggy.webhook_url');
+        if ($webhookUrl !== '' && str_starts_with($webhookUrl, 'https://')) {
+            $options['webhookUrl'] = $webhookUrl;
+        }
+
         try {
-            $accessToken = $provider->createConnectToken([
-                'clientUserId' => $clientUserId,
-                'avoidDuplicates' => true,
-            ]);
+            $accessToken = $provider->createConnectToken($options);
         } catch (Throwable $e) {
             report($e);
 

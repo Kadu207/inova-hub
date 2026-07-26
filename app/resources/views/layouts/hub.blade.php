@@ -53,6 +53,16 @@
             padding: 0.65rem 0.8rem;
             font-size: 1rem;
         }
+        select {
+            width: 100%;
+            min-height: 44px;
+            border-radius: 10px;
+            border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+            background: #0c1116;
+            color: var(--text);
+            padding: 0.65rem 0.8rem;
+            font-size: 1rem;
+        }
         button, .btn {
             display: inline-flex;
             align-items: center;
@@ -69,6 +79,19 @@
             cursor: pointer;
             text-decoration: none;
         }
+        .btn-ghost {
+            background: transparent;
+            color: var(--muted);
+            border: 1px solid color-mix(in srgb, var(--text) 20%, transparent);
+        }
+        .btn-danger, button.btn-danger {
+            background: transparent;
+            color: var(--danger);
+            border: 1px solid color-mix(in srgb, var(--danger) 45%, transparent);
+            width: auto;
+            margin: 0;
+            padding: 0 1rem;
+        }
         .errors { color: var(--danger); margin: 0 0 1rem; padding: 0; list-style: none; }
         .errors li { margin: 0.25rem 0; }
         .footer-link { margin-top: 1rem; text-align: center; color: var(--muted); }
@@ -82,8 +105,47 @@
         }
         .topbar form { margin: 0; width: auto; }
         .topbar button { width: auto; margin: 0; padding: 0 1rem; background: transparent; color: var(--muted); border: 1px solid color-mix(in srgb, var(--text) 20%, transparent); }
+        .totals {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+        .total-value { margin: 0.25rem 0 0; font-weight: 700; font-size: clamp(0.95rem, 3.5vw, 1.1rem); }
+        .income { color: var(--accent); }
+        .expense { color: var(--danger); }
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem 0.75rem;
+        }
+        .tx-list { display: grid; gap: var(--space); }
+        .tx-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            align-items: flex-start;
+        }
+        .tx-desc { margin: 0; font-weight: 600; }
+        .tx-amount { margin: 0; font-weight: 700; white-space: nowrap; }
+        .tx-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 0.85rem;
+            align-items: center;
+        }
+        .tx-actions .btn-ghost {
+            width: auto;
+            margin: 0;
+            padding: 0 1rem;
+        }
+        .tx-actions form { margin: 0; }
         @media (min-width: 768px) {
-            .shell { width: min(100% - 2rem, 36rem); }
+            .shell { width: min(100% - 2rem, 40rem); }
+            .filter-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        }
+        @media (max-width: 380px) {
+            .totals { grid-template-columns: 1fr; }
         }
     </style>
 </head>

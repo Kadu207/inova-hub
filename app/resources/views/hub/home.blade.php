@@ -17,6 +17,14 @@
     </div>
 
     <div class="card" style="margin-top:var(--space);">
+        <p class="sub" style="margin-top:0;">Finanças</p>
+        <p class="sub" style="margin-bottom:0;">Lançamentos manuais com filtros e totais do período.</p>
+        <p style="margin-top:1rem;">
+            <a class="btn" href="{{ route('hub.transactions.index') }}">Ver lançamentos</a>
+        </p>
+    </div>
+
+    <div class="card" style="margin-top:var(--space);">
         <p class="sub" style="margin-top:0;">Finova (WhatsApp)</p>
 
         @if ($whatsappIdentity)

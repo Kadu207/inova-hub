@@ -244,13 +244,13 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** CRUD API.
 - **Decisões:** Filtro data/categoria; paginação.
 - **Tarefas:**
-  - [ ] Tela `/app/transactions`
-  - [ ] Editar/excluir
-  - [ ] Totais do período
+  - [x] Tela `/app/transactions`
+  - [x] Editar/excluir
+  - [x] Totais do período
 - **Entregáveis:** UI lançamentos.
 - **Donos:** Agente
 - **Dependências:** D15
-- **Critério de pronto:** User cria/edita gasto no Hub.
+- **Critério de pronto:** User cria/edita gasto no Hub. (`/hub/transactions`; alias `/app/transactions`)
 
 ### D17 — NLU `tx.create` / `tx.income` (texto)
 

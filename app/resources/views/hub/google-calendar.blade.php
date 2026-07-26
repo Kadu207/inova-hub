@@ -50,8 +50,11 @@
             <p class="sub" style="margin-top:1rem;">Sincronização de eventos (lista no Hub) chega no D30.</p>
         @elseif (! $configured)
             <p class="errors" style="margin-top:1rem;">
-                Google OAuth não configurado. Defina <code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code>
-                e o redirect URI no Google Cloud Console.
+                Google OAuth não configurado no servidor. Em <code>/opt/inovahub/.env.prod</code> defina
+                <code>GOOGLE_CLIENT_ID</code>, <code>GOOGLE_CLIENT_SECRET</code> e
+                <code>GOOGLE_REDIRECT_URI</code>, depois
+                <code>docker compose -f docker-compose.prod.yml --env-file .env.prod up -d app worker</code>.
+                Guia: docs/34-google-oauth-setup.md
             </p>
         @else
             <form method="post" action="{{ route('hub.google.redirect') }}" style="margin-top:1rem;">

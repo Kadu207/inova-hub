@@ -10,7 +10,7 @@
 | Hub + API HTTPS | **200** ✅ |
 | Origem | Cloudflare Tunnel `inovahub` → `127.0.0.1:8088` |
 | D28 na VPS | Deploy + migrate feitos (`c9e148e`) |
-| D29 na VPS | **Pendente** (pull + migrate + rebuild; secrets Google no `.env.prod`) |
+| D29 na VPS | Deploy + migrate feitos (`465cec2`); falta `GOOGLE_*` no `.env.prod` se ainda vazio |
 
 ## Arquitetura
 

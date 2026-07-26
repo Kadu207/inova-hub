@@ -60,6 +60,10 @@ services:
       CACHE_STORE: redis
       SESSION_DRIVER: redis
       TRUSTED_PROXIES: "*"
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-https://inovahub.inovatitech.com.br/hub/google/callback}
+      GOOGLE_CALENDAR_CONSENT_VERSION: ${GOOGLE_CALENDAR_CONSENT_VERSION:-gcal-1.0}
     depends_on:
       postgres:
         condition: service_healthy
@@ -92,6 +96,10 @@ services:
       QUEUE_CONNECTION: redis
       CACHE_STORE: redis
       SESSION_DRIVER: redis
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_REDIRECT_URI: ${GOOGLE_REDIRECT_URI:-https://inovahub.inovatitech.com.br/hub/google/callback}
+      GOOGLE_CALENDAR_CONSENT_VERSION: ${GOOGLE_CALENDAR_CONSENT_VERSION:-gcal-1.0}
     depends_on:
       postgres:
         condition: service_healthy

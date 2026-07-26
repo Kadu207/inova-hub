@@ -3,12 +3,12 @@
 namespace App\Services\WhatsApp;
 
 /**
- * Extrai mensagens de texto do payload Cloud API (sanitizado / sem PII extra).
+ * Extrai mensagens de texto/áudio do payload Cloud API (sanitizado / sem PII extra).
  */
 final class ParsesWhatsappWebhook
 {
     /**
-     * @return list<array{wamid: string, from: string, text: string, type: string}>
+     * @return list<array{wamid: string, from: string, text: string, type: string, media_id: ?string}>
      */
     public function extractInboundMessages(array $payload): array
     {
@@ -31,8 +31,21 @@ final class ParsesWhatsappWebhook
                     }
 
                     $text = '';
+                    $mediaId = null;
+
                     if ($type === 'text') {
                         $text = (string) ($message['text']['body'] ?? '');
+                    }
+
+                    if ($type === 'audio') {
+                        $mediaId = (string) ($message['audio']['id'] ?? '');
+                        if ($mediaId === '') {
+                            continue;
+                        }
+                    }
+
+                    if ($type !== 'text' && $type !== 'audio') {
+                        continue;
                     }
 
                     $messages[] = [
@@ -40,6 +53,7 @@ final class ParsesWhatsappWebhook
                         'from' => $from,
                         'text' => $text,
                         'type' => $type,
+                        'media_id' => $mediaId,
                     ];
                 }
             }

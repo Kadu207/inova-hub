@@ -270,13 +270,13 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Whisper/OpenAI; download mídia Meta.
 - **Decisões:** Áudio não retido após STT (retenção mínima).
 - **Tarefas:**
-  - [ ] Download media WhatsApp
-  - [ ] Transcrição
-  - [ ] Reusar NLU
+  - [x] Download media WhatsApp
+  - [x] Transcrição
+  - [x] Reusar NLU
 - **Entregáveis:** Gasto por áudio.
 - **Donos:** Agente
 - **Dependências:** D17
-- **Critério de pronto:** 5 áudios de teste corretos.
+- **Critério de pronto:** 5 áudios de teste corretos. (`FinovaAudioSttTest`)
 
 ### D19 — Consultas `tx.query`
 

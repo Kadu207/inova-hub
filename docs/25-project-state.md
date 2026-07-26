@@ -1,6 +1,6 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-25 (D17 NLU gastos por texto)  
+**Última atualização:** 2026-07-25 (D18 áudio→Whisper→NLU)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
 
 ## DNS / VPS
@@ -8,21 +8,20 @@
 | Item | Status |
 |------|--------|
 | Hub + API HTTPS | **200** ✅ |
-| D16 em prod | OK |
-| D17 na VPS | **Pendente** (`git pull` + rebuild app/worker; sem migrate) |
+| D17 em prod | OK |
+| D18 na VPS | **Pendente** (`git pull` + rebuild app/worker) |
 
 ## Código
 
 | Item | Status |
 |------|--------|
-| NLU heurístico PT-BR | OK (≥85% eval 20 frases) |
-| LLM opcional | `OPENAI_API_KEY` ou `GROQ_API_KEY` |
-| Confirmação BR-004 | Cache pending + sim/não |
-| Suite | verdes incl. `FinovaTransactionNluTest` |
+| Download mídia Meta | `DownloadsWhatsappMedia` |
+| STT Whisper | `TranscribesWhatsappAudio` (temp file apagado) |
+| Pipeline | áudio → texto → NLU D17 |
+| Chaves LLM/STT | `docs/29-llm-keys-setup.md` |
 
 ## Operador
 
-1. Deploy D17 + restart **worker** (job WhatsApp).  
-2. Opcional: colar `OPENAI_API_KEY`/`GROQ_API_KEY` no `.env`.  
-3. WhatsApp vinculado + Meta tokens para E2E.  
-4. Próximo: **D18** STT áudio → mesmo pipeline.
+1. Como obter keys: [29-llm-keys-setup.md](29-llm-keys-setup.md)  
+2. Deploy D18 + `OPENAI_API_KEY` (ou Groq) para áudio real  
+3. Próximo: **D19** consultas “quanto gastei essa semana?”

@@ -16,7 +16,7 @@ final class FinovaCopy
         return "Eu sou a Finova. Você pode:\n"
             ."• dizer *oi*\n"
             ."• enviar um código de 6 dígitos do Hub — vinculo seu WhatsApp\n"
-            ."• lançar gastos/receitas em texto, ex.: *gastei 45 no almoço* ou *recebi 3000 de salário*\n"
+            ."• lançar gastos/receitas em *texto* ou *áudio*, ex.: *gastei 45 no almoço*\n"
             ."• digitar *ajuda* — este menu\n\n"
             .'Se eu ficar na dúvida, peço confirmação (sim/não) antes de gravar.';
     }
@@ -60,5 +60,15 @@ final class FinovaCopy
     public static function transactionCancelled(): string
     {
         return 'Ok, cancelei. Nada foi gravado.';
+    }
+
+    public static function audioNeedsStt(): string
+    {
+        return 'Recebi seu áudio, mas a transcrição (Whisper) ainda não está configurada. Peça ao admin para definir OPENAI_API_KEY ou GROQ_API_KEY, ou envie o gasto em texto.';
+    }
+
+    public static function audioFailed(): string
+    {
+        return 'Não consegui processar esse áudio. Tente de novo ou envie em texto, ex.: *gastei 30 no uber*.';
     }
 }

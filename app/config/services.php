@@ -45,9 +45,19 @@ return [
     'llm' => [
         // OpenAI: https://api.openai.com/v1 + OPENAI_API_KEY
         // Groq:   https://api.groq.com/openai/v1 + GROQ_API_KEY
-        'api_key' => env('OPENAI_API_KEY', env('GROQ_API_KEY')),
-        'base_url' => env('LLM_BASE_URL', env('OPENAI_API_KEY') ? 'https://api.openai.com/v1' : (env('GROQ_API_KEY') ? 'https://api.groq.com/openai/v1' : '')),
-        'model' => env('LLM_MODEL', env('GROQ_API_KEY') ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini'),
+        'api_key' => env('OPENAI_API_KEY') ?: env('GROQ_API_KEY'),
+        'base_url' => env('LLM_BASE_URL') ?: (
+            env('OPENAI_API_KEY') ? 'https://api.openai.com/v1' : (
+                env('GROQ_API_KEY') ? 'https://api.groq.com/openai/v1' : ''
+            )
+        ),
+        'model' => env('LLM_MODEL', env('GROQ_API_KEY') && ! env('OPENAI_API_KEY') ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini'),
+        'stt_base_url' => env('STT_BASE_URL') ?: (
+            env('OPENAI_API_KEY') ? 'https://api.openai.com/v1' : (
+                env('GROQ_API_KEY') ? 'https://api.groq.com/openai/v1' : ''
+            )
+        ),
+        'stt_model' => env('STT_MODEL', env('OPENAI_API_KEY') ? 'whisper-1' : 'whisper-large-v3'),
     ],
 
     'finova' => [

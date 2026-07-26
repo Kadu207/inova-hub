@@ -9,7 +9,7 @@ Toda regra tem ID `BR-xxx`. Mudança = atualizar este índice + arquivo + teste 
 | BR-003 | Lançamento financeiro por NL | Finanças | `FinovaTransactionNluTest` |
 | BR-004 | Confirmação se confiança baixa | Finanças/IA | `FinovaTransactionNluTest` |
 | BR-005 | Open Finance somente leitura | Pluggy | `PluggyOpenFinanceAdapterTest` |
-| BR-006 | Revogar OF apaga dados do item | Pluggy/LGPD | a criar |
+| BR-006 | Revogar OF apaga dados do item | Pluggy/LGPD | `OfCategorizeAndRevokeTest` |
 | BR-007 | Cancelamento self-service Asaas | Billing | a criar |
 | BR-008 | Export e exclusão de conta | LGPD | a criar |
 | BR-009 | Papéis owner/member/viewer | Equipe | a criar |

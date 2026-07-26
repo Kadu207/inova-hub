@@ -26,6 +26,7 @@ class OfTransaction extends Model
         'type',
         'description',
         'category_suggested',
+        'category_manual',
         'occurred_at',
     ];
 
@@ -33,6 +34,7 @@ class OfTransaction extends Model
     {
         return [
             'amount_cents' => 'integer',
+            'category_manual' => 'boolean',
             'occurred_at' => 'datetime',
         ];
     }

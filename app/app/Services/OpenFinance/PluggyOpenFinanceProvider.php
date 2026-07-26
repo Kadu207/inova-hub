@@ -221,6 +221,23 @@ final class PluggyOpenFinanceProvider implements OpenFinanceProvider
         return $this->mapTransactions($response->json('results'));
     }
 
+    public function deleteItem(string $itemId): void
+    {
+        $apiKey = $this->authenticate();
+        $baseUrl = rtrim((string) config('services.pluggy.base_url'), '/');
+
+        try {
+            Http::baseUrl($baseUrl)
+                ->withHeaders(['X-API-KEY' => $apiKey])
+                ->acceptJson()
+                ->timeout(20)
+                ->delete('/items/'.$itemId)
+                ->throw();
+        } catch (RequestException $e) {
+            throw new RuntimeException('Pluggy delete item failed: '.$e->getMessage(), previous: $e);
+        }
+    }
+
     /**
      * @param  mixed  $results
      * @return list<array{id: string, account_id: string, amount_cents: int, currency: string, type: string, description: ?string, category_suggested: ?string, occurred_at: string}>

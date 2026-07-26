@@ -44,9 +44,13 @@ final class SyncsPluggyItem
                 throw new \RuntimeException('Pluggy item not found for delete: '.$itemId);
             }
 
-            $item->update(['status' => OfItem::STATUS_DELETED]);
+            $this->wipeLocalOfData($item);
+            $item->update([
+                'status' => OfItem::STATUS_DELETED,
+                'consent_revoked_at' => $item->consent_revoked_at ?? now(),
+            ]);
 
-            return $item;
+            return $item->fresh();
         }
 
         $userId = $this->resolveUserId($clientUserId);
@@ -139,22 +143,50 @@ final class SyncsPluggyItem
                 continue;
             }
 
+            $existing = OfTransaction::query()
+                ->where('organization_id', $organizationId)
+                ->where('pluggy_transaction_id', $row['id'])
+                ->first();
+
+            $attrs = [
+                'of_account_id' => $account->id,
+                'amount_cents' => $row['amount_cents'],
+                'currency' => $row['currency'],
+                'type' => $row['type'],
+                'description' => $row['description'],
+                'occurred_at' => Carbon::parse($row['occurred_at']),
+            ];
+
+            if ($existing === null) {
+                $attrs['category_suggested'] = $row['category_suggested'];
+            } elseif (! $existing->category_manual
+                && ($existing->category_suggested === null || $existing->category_suggested === '')
+                && filled($row['category_suggested'])) {
+                $attrs['category_suggested'] = $row['category_suggested'];
+            }
+
             OfTransaction::query()->updateOrCreate(
                 [
                     'organization_id' => $organizationId,
                     'pluggy_transaction_id' => $row['id'],
                 ],
-                [
-                    'of_account_id' => $account->id,
-                    'amount_cents' => $row['amount_cents'],
-                    'currency' => $row['currency'],
-                    'type' => $row['type'],
-                    'description' => $row['description'],
-                    'category_suggested' => $row['category_suggested'],
-                    'occurred_at' => Carbon::parse($row['occurred_at']),
-                ]
+                $attrs
             );
         }
+    }
+
+    private function wipeLocalOfData(OfItem $item): void
+    {
+        $accountIds = OfAccount::query()
+            ->where('of_item_id', $item->id)
+            ->pluck('id');
+
+        if ($accountIds->isEmpty()) {
+            return;
+        }
+
+        OfTransaction::query()->whereIn('of_account_id', $accountIds)->delete();
+        OfAccount::query()->where('of_item_id', $item->id)->delete();
     }
 
     private function resolveOrganizationId(string $itemId, ?string $clientUserId): ?string

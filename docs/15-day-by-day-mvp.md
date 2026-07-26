@@ -389,10 +389,10 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** TX OF.
 - **Decisões:** Categoria sugerida editável; revogar conexão no Hub.
 - **Tarefas:**
-  - [ ] Job categorize
-  - [ ] Botão desconectar / revogar consentimento
-  - [ ] Apagar ou anonimizar dados OF no revoke
-- **Entregáveis:** Fluxo LGPD de desconexão.
+  - [x] Job categorize (`CategorizeOfTransactions` + heurística PT-BR)
+  - [x] Botão desconectar / revogar consentimento
+  - [x] Apagar dados OF no revoke (`consent_revoked_at`, BR-006)
+- **Entregáveis:** Fluxo LGPD de desconexão + edição de categoria no extrato.
 - **Donos:** Agente
 - **Dependências:** D25
 - **Critério de pronto:** Revogar remove item e dados associados.

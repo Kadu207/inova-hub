@@ -30,12 +30,14 @@ class OfItem extends Model
         'client_user_id',
         'connector_name',
         'consent_at',
+        'consent_revoked_at',
     ];
 
     protected function casts(): array
     {
         return [
             'consent_at' => 'datetime',
+            'consent_revoked_at' => 'datetime',
         ];
     }
 

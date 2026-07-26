@@ -107,6 +107,7 @@ class PluggyOpenFinanceAdapterTest extends TestCase
         $this->assertContains('getItem', $methods);
         $this->assertContains('listAccounts', $methods);
         $this->assertContains('listTransactions', $methods);
+        $this->assertContains('deleteItem', $methods);
     }
 
     public function test_artisan_pluggy_connectors_lists_sandbox_catalog(): void

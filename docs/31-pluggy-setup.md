@@ -73,6 +73,6 @@ PLUGGY_WEBHOOK_URL=https://api-inovahub.inovatitech.com.br/webhooks/pluggy
 
 ## Próximos dias
 
-- **D26** intents Finova bancários  
-- **D27** revogação LGPD  
+- **D27** ✅ categorização OF + revogação LGPD  
+- **D28** Termos OF + QA semana 4  
 

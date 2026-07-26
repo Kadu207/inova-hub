@@ -47,4 +47,9 @@ interface OpenFinanceProvider
      * @return list<array{id: string, account_id: string, amount_cents: int, currency: string, type: string, description: ?string, category_suggested: ?string, occurred_at: string}>
      */
     public function listTransactionsFromLink(string $url): array;
+
+    /**
+     * Delete a Pluggy item (revokes consent at the provider). Local wipe is caller's responsibility (BR-006).
+     */
+    public function deleteItem(string $itemId): void;
 }

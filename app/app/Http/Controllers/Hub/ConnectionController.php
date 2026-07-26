@@ -7,10 +7,13 @@ use App\Jobs\SyncPluggyItem;
 use App\Models\OfAccount;
 use App\Models\OfItem;
 use App\Models\OfTransaction;
+use App\Services\OpenFinance\CategorizesOfTransactions;
+use App\Services\OpenFinance\RevokesPluggyItem;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Throwable;
 
@@ -52,7 +55,29 @@ final class ConnectionController
             'user' => $request->user(),
             'account' => $account->load('item'),
             'transactions' => $transactions,
+            'categoryOptions' => CategorizesOfTransactions::LABELS,
         ]);
+    }
+
+    public function updateTransactionCategory(Request $request, OfTransaction $transaction): RedirectResponse
+    {
+        $data = $request->validate([
+            'category_suggested' => [
+                'required',
+                'string',
+                'max:64',
+                Rule::in(array_keys(CategorizesOfTransactions::LABELS)),
+            ],
+        ]);
+
+        $transaction->update([
+            'category_suggested' => $data['category_suggested'],
+            'category_manual' => true,
+        ]);
+
+        return redirect()
+            ->route('hub.connections.accounts.show', $transaction->of_account_id)
+            ->with('status', 'Categoria atualizada.');
     }
 
     public function sync(Request $request, OfItem $item): RedirectResponse
@@ -66,6 +91,15 @@ final class ConnectionController
         return redirect()
             ->route('hub.connections.index')
             ->with('status', 'Sincronização enfileirada. Atualize em alguns segundos.');
+    }
+
+    public function revoke(Request $request, OfItem $item, RevokesPluggyItem $revoker): RedirectResponse
+    {
+        $revoker->handle($item);
+
+        return redirect()
+            ->route('hub.connections.index')
+            ->with('status', 'Conexão revogada. Dados bancários desta conexão foram removidos.');
     }
 
     public function connectToken(Request $request, OpenFinanceProvider $provider): JsonResponse

@@ -48,10 +48,17 @@
                     <p class="tx-desc">{{ $item->connector_name ?: 'Item Pluggy' }}</p>
                     <p class="sub" style="margin:0.25rem 0 0;">{{ $item->status }} · {{ $item->accounts_count }} conta(s)</p>
                 </div>
-                <form method="post" action="{{ route('hub.connections.sync', $item) }}">
-                    @csrf
-                    <button type="submit" class="btn-ghost" style="width:auto;margin:0;padding:0 1rem;">Sincronizar</button>
-                </form>
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; justify-content:flex-end;">
+                    <form method="post" action="{{ route('hub.connections.sync', $item) }}">
+                        @csrf
+                        <button type="submit" class="btn-ghost" style="width:auto;margin:0;padding:0 1rem;">Sincronizar</button>
+                    </form>
+                    <form method="post" action="{{ route('hub.connections.revoke', $item) }}"
+                          onsubmit="return confirm('Revogar esta conexão? Saldos e extratos desta conexão serão apagados.');">
+                        @csrf
+                        <button type="submit" class="btn-ghost" style="width:auto;margin:0;padding:0 1rem;color:#b42318;">Revogar</button>
+                    </form>
+                </div>
             </div>
 
             @forelse ($item->accounts as $account)

@@ -2,6 +2,8 @@
 
 namespace App\Jobs;
 
+use App\Jobs\CategorizeOfTransactions;
+use App\Models\OfItem;
 use App\Models\WebhookEvent;
 use App\Services\OpenFinance\SyncsPluggyItem;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -41,13 +43,19 @@ final class SyncPluggyItem implements ShouldQueue
         }
 
         try {
-            $sync->handle($this->payload);
+            $item = $sync->handle($this->payload);
 
             $event?->update([
                 'status' => WebhookEvent::STATUS_PROCESSED,
                 'processed_at' => now(),
                 'last_error' => null,
             ]);
+
+            if ($item instanceof OfItem
+                && $item->status !== OfItem::STATUS_DELETED
+                && filled($item->organization_id)) {
+                CategorizeOfTransactions::dispatch((string) $item->organization_id);
+            }
 
             Log::info('pluggy.item_synced', [
                 'event' => $this->payload['event'],

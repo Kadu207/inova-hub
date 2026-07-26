@@ -74,5 +74,6 @@ PLUGGY_WEBHOOK_URL=https://api-inovahub.inovatitech.com.br/webhooks/pluggy
 ## Próximos dias
 
 - **D27** ✅ categorização OF + revogação LGPD  
-- **D28** Termos OF + QA semana 4  
+- **D28** ✅ Termos OF + QA semana 4  
+- **D29** Google Calendar OAuth  
 

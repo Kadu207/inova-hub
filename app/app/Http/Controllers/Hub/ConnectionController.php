@@ -8,6 +8,7 @@ use App\Models\OfAccount;
 use App\Models\OfItem;
 use App\Models\OfTransaction;
 use App\Services\OpenFinance\CategorizesOfTransactions;
+use App\Services\OpenFinance\RecordsOpenFinanceConsent;
 use App\Services\OpenFinance\RevokesPluggyItem;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Http\JsonResponse;
@@ -40,6 +41,7 @@ final class ConnectionController
             'items' => $items,
             'totalBalanceCents' => (int) $totalBalanceCents,
             'includeSandbox' => (bool) config('services.pluggy.include_sandbox', true),
+            'consentVersion' => (string) config('open_finance.consent_version', 'of-1.0'),
         ]);
     }
 
@@ -139,7 +141,7 @@ final class ConnectionController
         ]);
     }
 
-    public function storeItem(Request $request): JsonResponse
+    public function storeItem(Request $request, RecordsOpenFinanceConsent $consent): JsonResponse
     {
         $user = $request->user();
         $orgId = TenantContext::id() ?? $request->session()->get('current_organization_id');
@@ -148,10 +150,14 @@ final class ConnectionController
             return response()->json(['message' => 'Tenant context required.'], 403);
         }
 
+        $version = $consent->currentVersion();
+
         $data = $request->validate([
             'item_id' => ['required', 'string', 'max:64'],
             'status' => ['nullable', 'string', 'max:32'],
             'connector_name' => ['nullable', 'string', 'max:191'],
+            'consent_accepted' => ['accepted'],
+            'consent_version' => ['required', 'string', Rule::in([$version])],
         ]);
 
         $clientUserId = sprintf('org:%s:user:%s', $orgId, $user->id);
@@ -167,8 +173,12 @@ final class ConnectionController
                 'client_user_id' => $clientUserId,
                 'connector_name' => $data['connector_name'] ?? null,
                 'consent_at' => now(),
+                'consent_version' => $version,
+                'consent_revoked_at' => null,
             ]
         );
+
+        $consent->record($orgId, $user, $item);
 
         SyncPluggyItem::dispatch([
             'event' => 'item/created',
@@ -180,6 +190,7 @@ final class ConnectionController
             'id' => $item->id,
             'pluggy_item_id' => $item->pluggy_item_id,
             'status' => $item->status,
+            'consent_version' => $item->consent_version,
         ], 201);
     }
 }

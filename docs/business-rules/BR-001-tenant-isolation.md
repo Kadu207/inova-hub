@@ -22,5 +22,5 @@ Isolamento em **quatro camadas**: membership → Eloquent Global Scope → Polic
 
 ## Teste
 
-Pest: `TenantIsolationTest` + cenário RLS.  
+Pest: `TenantIsolationTest` + `OfTenantIsolationTest` (OF IDOR) + cenário RLS.  
 Detalhes de segurança: [21-security-layers.md](../21-security-layers.md) L6/L7.

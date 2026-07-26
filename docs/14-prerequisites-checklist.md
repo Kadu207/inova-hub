@@ -1,6 +1,6 @@
 # 14 — Checklist de pré-requisitos (Inova Hub / Finova)
 
-**Atualizado:** 25/07/2026 (fim Semana 2 — ver [28-week2-retro.md](28-week2-retro.md))  
+**Atualizado:** 26/07/2026 (fim Semana 4 OF — ver [33-week4-open-finance-qa.md](33-week4-open-finance-qa.md))  
 **Donos:** Operador = você · Agente = Cursor  
 **Regra:** não colar secrets neste arquivo — só status e nomes de variáveis.
 
@@ -60,11 +60,23 @@ Origem: Tunnel only (não disputa 80/443) — [x]
 
 | Item | Status | Ref |
 |------|--------|-----|
-| Conta Pluggy | [ ] | |
-| Application sandbox | [ ] | `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` |
+| Conta Pluggy | [x] | sandbox em uso na VPS |
+| Application sandbox | [x] | `PLUGGY_CLIENT_ID`, `PLUGGY_CLIENT_SECRET` |
 | Application production | [ ] | após KYC |
-| Webhook `https://api-inovahub.inovatitech.com.br/webhooks/pluggy` | [ ] | |
-| Widget Connect no Hub | [ ] | |
+| Webhook `https://api-inovahub.inovatitech.com.br/webhooks/pluggy` | [x] | GET ping + POST events |
+| Widget Connect no Hub | [x] | `/hub/connections` |
+| Consentimento versionado (`of-1.0`) | [x] | `/legal/open-finance` · `consent_logs` |
+
+#### 2.2.1 Instituições sandbox testadas (Semana 4)
+
+Preencher após smoke na VPS. Não inventar resultado — marcar só o que foi exercitado.
+
+| Instituição / conector | Ambiente | Conectar | Sync Hub | Finova saldo | Categoria | Revogar | Data | Nota |
+|------------------------|----------|----------|----------|--------------|-----------|---------|------|------|
+| Pluggy Bank (sandbox) | sandbox | [ ] | [ ] | [ ] | [ ] | [ ] | | |
+| Outro conector BR | sandbox | [ ] | [ ] | [ ] | [ ] | [ ] | | |
+
+Guia: [31-pluggy-setup.md](31-pluggy-setup.md) · QA: [33-week4-open-finance-qa.md](33-week4-open-finance-qa.md) · Termos: [32-open-finance-terms.md](32-open-finance-terms.md)
 
 ### 2.3 Asaas (billing)
 
@@ -94,9 +106,9 @@ Origem: Tunnel only (não disputa 80/443) — [x]
 | Item | Status |
 |------|--------|
 | CNPJ / razão social definida | [ ] |
-| Termos de Uso no ar | [ ] |
-| Política de Privacidade (OF + WA + IA + Asaas) | [ ] |
-| Consentimento Open Finance versionado | [ ] |
+| Termos de Uso no ar | [ ] parcial — OF em `/legal/open-finance` |
+| Política de Privacidade (OF + WA + IA + Asaas) | [x] rascunho `/legal/privacy` |
+| Consentimento Open Finance versionado | [x] `of-1.0` + `consent_logs` |
 | DPO / e-mail titular | [ ] |
 
 ---

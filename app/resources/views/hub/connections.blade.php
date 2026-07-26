@@ -14,7 +14,13 @@
 
     <div class="card">
         <p class="sub" style="margin-top:0;">Open Finance (Pluggy) — somente leitura</p>
-        <p>Conecte um banco sandbox para ver saldos e extratos. O consentimento fica no widget Pluggy.</p>
+        <p>Conecte um banco sandbox para ver saldos e extratos. Leitura apenas — sem Pix/TED (BR-005).</p>
+        <p class="sub" style="margin:0.75rem 0 0;">
+            Consentimento versão <strong>{{ $consentVersion }}</strong> —
+            <a href="{{ route('legal.open-finance') }}" target="_blank" rel="noopener">ler termos OF</a>
+            ·
+            <a href="{{ route('legal.privacy') }}" target="_blank" rel="noopener">privacidade</a>
+        </p>
 
         <div class="totals" style="margin-top:1rem;">
             <div>
@@ -36,7 +42,11 @@
         @if (! $configured)
             <p class="errors" style="margin-top:1rem;">Pluggy não configurado. Defina <code>PLUGGY_CLIENT_ID</code> e <code>PLUGGY_CLIENT_SECRET</code>.</p>
         @else
-            <button type="button" id="btn-connect-bank">Conectar banco</button>
+            <label style="display:flex; gap:0.65rem; align-items:flex-start; margin-top:1rem; cursor:pointer;">
+                <input type="checkbox" id="of-consent" style="width:auto; min-height:auto; margin-top:0.2rem;">
+                <span class="sub" style="margin:0;">Li e aceito o consentimento Open Finance (versão {{ $consentVersion }}). Posso revogar a qualquer momento.</span>
+            </label>
+            <button type="button" id="btn-connect-bank" disabled>Conectar banco</button>
             <p id="connect-status" class="sub" style="margin-top:0.75rem;" role="status" aria-live="polite"></p>
         @endif
     </div>
@@ -93,17 +103,30 @@
 <script>
 (() => {
   const btn = document.getElementById('btn-connect-bank');
+  const consent = document.getElementById('of-consent');
   const statusEl = document.getElementById('connect-status');
-  if (!btn) return;
+  if (!btn || !consent) return;
 
   const csrf = document.querySelector('meta[name="csrf-token"]')?.content || '';
   const includeSandbox = @json($includeSandbox);
+  const consentVersion = @json($consentVersion);
 
   function setStatus(msg) {
     if (statusEl) statusEl.textContent = msg;
   }
 
+  function syncConsentGate() {
+    btn.disabled = !consent.checked;
+  }
+  consent.addEventListener('change', syncConsentGate);
+  syncConsentGate();
+
   btn.addEventListener('click', async () => {
+    if (!consent.checked) {
+      setStatus('Aceite o consentimento Open Finance para continuar.');
+      return;
+    }
+
     btn.disabled = true;
     setStatus('Gerando Connect Token…');
 
@@ -139,7 +162,7 @@
 
           if (!itemId) {
             setStatus('Conexão ok, mas o itemId não veio no callback. Atualize a página.');
-            btn.disabled = false;
+            syncConsentGate();
             return;
           }
 
@@ -158,12 +181,14 @@
               item_id: itemId,
               status: status,
               connector_name: connectorName,
+              consent_accepted: true,
+              consent_version: consentVersion,
             }),
           });
 
           if (!saveRes.ok) {
             setStatus('Item criado na Pluggy, mas falhou ao salvar no Hub. Atualize e tente de novo.');
-            btn.disabled = false;
+            syncConsentGate();
             return;
           }
 
@@ -173,10 +198,10 @@
         onError: (error) => {
           console.error(error);
           setStatus('Erro no widget Pluggy. Tente novamente.');
-          btn.disabled = false;
+          syncConsentGate();
         },
         onClose: () => {
-          btn.disabled = false;
+          syncConsentGate();
           if (statusEl && statusEl.textContent.includes('Abrindo')) {
             setStatus('Widget fechado.');
           }
@@ -187,7 +212,7 @@
     } catch (err) {
       console.error(err);
       setStatus(err.message || 'Falha ao conectar.');
-      btn.disabled = false;
+      syncConsentGate();
     }
   });
 })();

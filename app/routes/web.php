@@ -5,6 +5,7 @@ use App\Http\Controllers\Hub\ConnectionController;
 use App\Http\Controllers\Hub\TransactionController;
 use App\Http\Controllers\Hub\WhatsappLinkController;
 use App\Http\Controllers\HubHomeController;
+use App\Http\Controllers\LegalController;
 use App\Http\Middleware\SetTenantContext;
 use Illuminate\Support\Facades\Route;
 
@@ -13,6 +14,9 @@ Route::get('/', function () {
         ? redirect()->route('hub.home')
         : redirect()->route('login');
 });
+
+Route::get('/legal/open-finance', [LegalController::class, 'openFinance'])->name('legal.open-finance');
+Route::get('/legal/privacy', [LegalController::class, 'privacy'])->name('legal.privacy');
 
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthSessionController::class, 'createRegister'])->name('register');

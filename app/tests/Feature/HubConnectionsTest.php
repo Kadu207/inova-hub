@@ -91,8 +91,11 @@ class HubConnectionsTest extends TestCase
                 'item_id' => 'item-pluggy-001',
                 'status' => 'UPDATED',
                 'connector_name' => 'Pluggy Bank',
+                'consent_accepted' => true,
+                'consent_version' => config('open_finance.consent_version'),
             ])->assertCreated()
-            ->assertJsonPath('pluggy_item_id', 'item-pluggy-001');
+            ->assertJsonPath('pluggy_item_id', 'item-pluggy-001')
+            ->assertJsonPath('consent_version', config('open_finance.consent_version'));
 
         Queue::assertPushed(SyncPluggyItem::class);
 
@@ -100,12 +103,33 @@ class HubConnectionsTest extends TestCase
             'organization_id' => $orgA->id,
             'pluggy_item_id' => 'item-pluggy-001',
             'connector_name' => 'Pluggy Bank',
+            'consent_version' => config('open_finance.consent_version'),
+        ]);
+
+        $this->assertDatabaseHas('consent_logs', [
+            'organization_id' => $orgA->id,
+            'type' => 'open_finance',
+            'version' => config('open_finance.consent_version'),
         ]);
 
         $this->get('/hub/connections')
             ->assertOk()
             ->assertSee('Pluggy Bank')
-            ->assertSee('Saldo total OF');
+            ->assertSee('Saldo total OF')
+            ->assertSee('Consentimento versão');
+
+        try {
+            $this->withoutExceptionHandling()
+                ->postJson('/hub/connections/items', [
+                    'item_id' => 'item-no-consent',
+                    'consent_version' => config('open_finance.consent_version'),
+                ]);
+            $this->fail('Expected ValidationException when consent is missing.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            $this->assertArrayHasKey('consent_accepted', $e->errors());
+        }
+
+        $this->withExceptionHandling();
 
         TenantContext::set($orgB->id);
         $this->actingAs($userB);

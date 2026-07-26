@@ -402,10 +402,10 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Fluxos OF.
 - **Decisões:** Texto consentimento versionado (`consent_version`).
 - **Tarefas:**
-  - [ ] Atualizar Termos/Privacidade (rascunho)
-  - [ ] Checklist instituições testadas no doc 14
-  - [ ] Testes isolamento tenant em dados OF
-- **Entregáveis:** Docs legais OF; testes IDOR OF.
+  - [x] Atualizar Termos/Privacidade (rascunho) — `/legal/*` + docs 32/33
+  - [x] Checklist instituições testadas no doc 14
+  - [x] Testes isolamento tenant em dados OF (`OfTenantIsolationTest`)
+- **Entregáveis:** Docs legais OF; testes IDOR OF; `consent_logs`.
 - **Donos:** Ambos
 - **Dependências:** D22–D27
 - **Critério de pronto:** Consentimento registrado; IDOR OF falha (bloqueado).

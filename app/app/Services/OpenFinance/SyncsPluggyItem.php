@@ -55,18 +55,29 @@ final class SyncsPluggyItem
 
         $userId = $this->resolveUserId($clientUserId);
 
+        $existing = OfItem::query()
+            ->where('organization_id', $orgId)
+            ->where('pluggy_item_id', $itemId)
+            ->first();
+
+        $attrs = [
+            'user_id' => $userId,
+            'status' => $remote['status'] ?: OfItem::STATUS_UPDATED,
+            'client_user_id' => $clientUserId,
+            'connector_name' => $remote['connector_name'],
+            'consent_at' => $existing?->consent_at ?? now(),
+        ];
+
+        if ($existing === null || blank($existing->consent_version)) {
+            $attrs['consent_version'] = (string) config('open_finance.consent_version', 'of-1.0');
+        }
+
         $item = OfItem::query()->updateOrCreate(
             [
                 'organization_id' => $orgId,
                 'pluggy_item_id' => $itemId,
             ],
-            [
-                'user_id' => $userId,
-                'status' => $remote['status'] ?: OfItem::STATUS_UPDATED,
-                'client_user_id' => $clientUserId,
-                'connector_name' => $remote['connector_name'],
-                'consent_at' => now(),
-            ]
+            $attrs
         );
 
         if (in_array($event, ['item/created', 'item/updated', 'item/login_succeeded', 'transactions/created', 'transactions/updated'], true)) {

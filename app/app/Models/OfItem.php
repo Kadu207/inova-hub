@@ -31,6 +31,7 @@ class OfItem extends Model
         'connector_name',
         'consent_at',
         'consent_revoked_at',
+        'consent_version',
     ];
 
     protected function casts(): array

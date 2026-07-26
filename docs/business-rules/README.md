@@ -4,7 +4,7 @@ Toda regra tem ID `BR-xxx`. Mudança = atualizar este índice + arquivo + teste 
 
 | ID | Título | Domínio | Teste |
 |----|--------|---------|-------|
-| BR-001 | Tenant isolation | Segurança | `tests/Feature/TenantIsolationTest.php` (a criar) |
+| BR-001 | Tenant isolation | Segurança | `TenantIsolationTest` + `OfTenantIsolationTest` |
 | BR-002 | Vincular WhatsApp por OTP | Onboarding | a criar |
 | BR-003 | Lançamento financeiro por NL | Finanças | `FinovaTransactionNluTest` |
 | BR-004 | Confirmação se confiança baixa | Finanças/IA | `FinovaTransactionNluTest` |

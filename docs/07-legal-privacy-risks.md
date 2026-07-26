@@ -31,9 +31,11 @@
 ## Checklist LGPD Inova Hub (pré-launch)
 
 - [ ] Política alinhada aos escopos reais  
+- [x] Rascunho Privacidade + Consentimento OF (`/legal/privacy`, `/legal/open-finance`, versão `of-1.0`) — ver [32-open-finance-terms.md](32-open-finance-terms.md)  
 - [ ] Registro de atividades de tratamento  
 - [ ] Base legal por finalidade  
 - [ ] Canal do titular (export/delete) no produto  
 - [ ] DPA com Meta, LLM, Open Finance, storage  
 - [ ] Retenção e anonimização documentadas  
 - [ ] MFA para staff; auditoria de acessos administrativos  
+- [x] Revogação OF apaga dados do item (BR-006) + `consent_logs`  

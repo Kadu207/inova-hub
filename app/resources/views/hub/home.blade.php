@@ -101,4 +101,12 @@
             <a class="btn" href="{{ route('hub.connections.index') }}">Conectar banco</a>
         </p>
     </div>
+
+    <div class="card" style="margin-top:var(--space);">
+        <p class="sub" style="margin-top:0;">Google Agenda</p>
+        <p class="sub">OAuth com escopos mínimos de calendário (sem People API).</p>
+        <p style="margin-top:1rem;">
+            <a class="btn" href="{{ route('hub.google.show') }}">Conectar Google</a>
+        </p>
+    </div>
 @endsection

@@ -98,7 +98,7 @@ Guia: [31-pluggy-setup.md](31-pluggy-setup.md) · QA: [33-week4-open-finance-qa.
 | OpenAI ou Groq | [ ] | `OPENAI_API_KEY` / `GROQ_API_KEY` |
 | Whisper (OpenAI) | [ ] | mesma key se OpenAI |
 | Resend | [ ] | `RESEND_API_KEY` |
-| Google Cloud OAuth | [ ] | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` |
+| Google Cloud OAuth | [ ] wiring Hub D29; client GCP operador | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI` — [34](34-google-oauth-setup.md) |
 | Cloudflare R2 (pode ser P1) | [ ] | `R2_*` |
 
 ### 2.5 Legal

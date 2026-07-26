@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\AuthSessionController;
 use App\Http\Controllers\Hub\ConnectionController;
+use App\Http\Controllers\Hub\GoogleCalendarController;
 use App\Http\Controllers\Hub\TransactionController;
 use App\Http\Controllers\Hub\WhatsappLinkController;
 use App\Http\Controllers\HubHomeController;
@@ -37,6 +38,11 @@ Route::middleware(['auth', SetTenantContext::class])->prefix('hub')->group(funct
     Route::get('/whatsapp', [WhatsappLinkController::class, 'show'])->name('hub.whatsapp');
     Route::post('/whatsapp/otp', [WhatsappLinkController::class, 'issue'])->name('hub.whatsapp.otp');
     Route::post('/whatsapp/confirm-dev', [WhatsappLinkController::class, 'confirmDev'])->name('hub.whatsapp.confirm-dev');
+
+    Route::get('/google', [GoogleCalendarController::class, 'show'])->name('hub.google.show');
+    Route::post('/google/redirect', [GoogleCalendarController::class, 'redirect'])->name('hub.google.redirect');
+    Route::get('/google/callback', [GoogleCalendarController::class, 'callback'])->name('hub.google.callback');
+    Route::post('/google/disconnect', [GoogleCalendarController::class, 'disconnect'])->name('hub.google.disconnect');
 
     Route::get('/connections', [ConnectionController::class, 'index'])->name('hub.connections.index');
     Route::post('/connections/connect-token', [ConnectionController::class, 'connectToken'])->name('hub.connections.connect-token');

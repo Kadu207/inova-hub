@@ -419,10 +419,11 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Projeto GCP; domínio verificado se necessário.
 - **Decisões:** Escopos mínimos Calendar; People API **fora** do MVP.
 - **Tarefas:**
-  - [ ] Criar OAuth client
-  - [ ] Redirect URIs Hub
-  - [ ] Tela consentimento interna
-- **Entregáveis:** Client ID/Secret no `.env`.
+  - [x] Wiring OAuth Hub (`/hub/google`) + redirect/callback
+  - [x] Redirect URI documentada (`/hub/google/callback`)
+  - [x] Tela consentimento interna (`gcal-1.0`)
+  - [ ] Criar OAuth client no GCP (operador) + secrets no `.env.prod`
+- **Entregáveis:** Client ID/Secret no `.env` (operador); app inicia OAuth.
 - **Donos:** Operador (+ Agente wiring)
 - **Dependências:** D09
 - **Critério de pronto:** Botão “Conectar Google” inicia OAuth.

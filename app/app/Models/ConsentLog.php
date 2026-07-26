@@ -13,6 +13,8 @@ class ConsentLog extends Model
 
     public const TYPE_OPEN_FINANCE = 'open_finance';
 
+    public const TYPE_GOOGLE_CALENDAR = 'google_calendar';
+
     protected $table = 'consent_logs';
 
     protected $fillable = [

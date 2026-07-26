@@ -17,6 +17,7 @@ final class FinovaCopy
             ."• dizer *oi*\n"
             ."• enviar um código de 6 dígitos do Hub — vinculo seu WhatsApp\n"
             ."• lançar gastos/receitas em *texto* ou *áudio*, ex.: *gastei 45 no almoço*\n"
+            ."• consultar: *quanto gastei essa semana?* (hoje / semana / mês)\n"
             ."• digitar *ajuda* — este menu\n\n"
             .'Se eu ficar na dúvida, peço confirmação (sim/não) antes de gravar.';
     }
@@ -70,5 +71,39 @@ final class FinovaCopy
     public static function audioFailed(): string
     {
         return 'Não consegui processar esse áudio. Tente de novo ou envie em texto, ex.: *gastei 30 no uber*.';
+    }
+
+    /**
+     * @param  array{
+     *   period: \App\Services\Finance\Query\TransactionPeriod,
+     *   expense_cents: int,
+     *   income_cents: int,
+     *   net_cents: int,
+     *   top_categories: list<array{name: string, amount_cents: int}>
+     * }  $summary
+     */
+    public static function transactionQuerySummary(array $summary): string
+    {
+        $periodLabel = $summary['period']->label();
+        $expense = 'R$ '.number_format($summary['expense_cents'] / 100, 2, ',', '.');
+        $income = 'R$ '.number_format($summary['income_cents'] / 100, 2, ',', '.');
+        $net = 'R$ '.number_format($summary['net_cents'] / 100, 2, ',', '.');
+
+        $lines = [
+            "Resumo *{$periodLabel}*:",
+            "• Despesas: {$expense}",
+            "• Receitas: {$income}",
+            "• Saldo: {$net}",
+        ];
+
+        if ($summary['top_categories'] !== []) {
+            $lines[] = 'Top categorias:';
+            foreach ($summary['top_categories'] as $row) {
+                $valor = 'R$ '.number_format($row['amount_cents'] / 100, 2, ',', '.');
+                $lines[] = "• {$row['name']}: {$valor}";
+            }
+        }
+
+        return implode("\n", $lines);
     }
 }

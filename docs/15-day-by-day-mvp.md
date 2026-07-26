@@ -283,9 +283,9 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Transações.
 - **Decisões:** Períodos: hoje, semana, mês; top categorias.
 - **Tarefas:**
-  - [ ] Intent consulta
-  - [ ] Resposta formatada Finova
-  - [ ] Espelhar cards no Hub dashboard
+  - [x] Intent consulta
+  - [x] Resposta formatada Finova
+  - [x] Espelhar cards no Hub dashboard
 - **Entregáveis:** “Quanto gastei essa semana?” funcional.
 - **Donos:** Agente
 - **Dependências:** D17

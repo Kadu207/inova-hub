@@ -5,6 +5,8 @@ namespace App\Services\Finance\Nlu;
 use App\Models\Category;
 use App\Models\Transaction;
 use App\Models\WhatsappIdentity;
+use App\Services\Finance\Query\ResolvesTransactionQuery;
+use App\Services\Finance\Query\SummarizesTransactionsForPeriod;
 use App\Services\WhatsApp\FinovaCopy;
 use App\Support\Tenancy\TenantContext;
 use App\Support\WhatsApp\PhoneNormalizer;
@@ -16,6 +18,8 @@ final class HandlesWhatsappTransactionText
     public function __construct(
         private readonly TransactionExtractor $extractor,
         private readonly PendingTransactionConfirmation $pending,
+        private readonly ResolvesTransactionQuery $queryResolver,
+        private readonly SummarizesTransactionsForPeriod $summarizer,
     ) {}
 
     /**
@@ -47,6 +51,22 @@ final class HandlesWhatsappTransactionText
             $this->persist($identity, $pendingTx);
 
             return ['handled' => true, 'reply' => FinovaCopy::transactionSaved($pendingTx)];
+        }
+
+        $period = $this->queryResolver->handle($text);
+        if ($period !== null) {
+            if ($identity === null) {
+                return ['handled' => true, 'reply' => FinovaCopy::transactionNeedsLink()];
+            }
+
+            TenantContext::set($identity->organization_id);
+            try {
+                $summary = $this->summarizer->handle($period);
+            } finally {
+                TenantContext::clear();
+            }
+
+            return ['handled' => true, 'reply' => FinovaCopy::transactionQuerySummary($summary)];
         }
 
         $extracted = $this->extractor->extract($text);

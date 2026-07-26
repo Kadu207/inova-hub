@@ -10,6 +10,9 @@ use App\Policies\CategoryPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\TenantNotePolicy;
 use App\Policies\TransactionPolicy;
+use App\Services\Finance\Nlu\HeuristicTransactionExtractor;
+use App\Services\Finance\Nlu\LlmTransactionExtractor;
+use App\Services\Finance\Nlu\TransactionExtractor;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -17,7 +20,15 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        $this->app->singleton(HeuristicTransactionExtractor::class);
+        $this->app->singleton(LlmTransactionExtractor::class);
+        $this->app->bind(TransactionExtractor::class, function ($app) {
+            $key = (string) config('services.llm.api_key');
+
+            return $key !== ''
+                ? $app->make(LlmTransactionExtractor::class)
+                : $app->make(HeuristicTransactionExtractor::class);
+        });
     }
 
     public function boot(): void

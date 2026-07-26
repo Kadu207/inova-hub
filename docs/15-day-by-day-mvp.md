@@ -257,13 +257,13 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** LLM key; Finova router.
 - **Decisões:** Confirmar se confiança < limiar; valores em BRL.
 - **Tarefas:**
-  - [ ] Prompt/extractor JSON estruturado
-  - [ ] Intent handlers
-  - [ ] Eval set 20 frases
+  - [x] Prompt/extractor JSON estruturado
+  - [x] Intent handlers
+  - [x] Eval set 20 frases
 - **Entregáveis:** Gastos por texto no Zap.
 - **Donos:** Agente
 - **Dependências:** D12, D15; LLM
-- **Critério de pronto:** ≥85% no eval set texto.
+- **Critério de pronto:** ≥85% no eval set texto. (heurística ≥85%; LLM opcional via `OPENAI_API_KEY`/`GROQ_API_KEY`)
 
 ### D18 — STT áudio → mesmo pipeline
 

@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\WebhookEvent;
+use App\Services\Finance\Nlu\HandlesWhatsappTransactionText;
 use App\Services\WhatsApp\ConsumesWhatsappOtp;
 use App\Services\WhatsApp\FinovaCopy;
 use App\Services\WhatsApp\ParsesWhatsappWebhook;
@@ -30,6 +31,7 @@ final class ProcessWhatsAppMessage implements ShouldQueue
         ConsumesWhatsappOtp $consumes,
         ResolvesFinovaIntent $intents,
         SendsWhatsappText $sender,
+        HandlesWhatsappTransactionText $transactions,
     ): void {
         $wamid = $this->message['wamid'];
         $from = $this->message['from'];
@@ -76,10 +78,10 @@ final class ProcessWhatsAppMessage implements ShouldQueue
                         return;
                     }
 
-                    $this->replyWithIntent($intents, $sender, $from, $text, $wamid);
+                    $this->replyConversation($transactions, $intents, $sender, $from, $text, $wamid);
                 }
             } else {
-                $this->replyWithIntent($intents, $sender, $from, $text, $wamid);
+                $this->replyConversation($transactions, $intents, $sender, $from, $text, $wamid);
             }
 
             $event->update([
@@ -97,13 +99,26 @@ final class ProcessWhatsAppMessage implements ShouldQueue
         }
     }
 
-    private function replyWithIntent(
+    private function replyConversation(
+        HandlesWhatsappTransactionText $transactions,
         ResolvesFinovaIntent $intents,
         SendsWhatsappText $sender,
         string $from,
         string $text,
         string $wamid,
     ): void {
+        $txResult = $transactions->handle($from, $text);
+
+        if ($txResult['handled'] === true) {
+            $sender->handle($from, (string) $txResult['reply']);
+            Log::info('whatsapp.transaction_intent', [
+                'wamid' => $wamid,
+                'phone_masked' => $this->maskPhone($from),
+            ]);
+
+            return;
+        }
+
         $intent = $intents->handle($text);
         $reply = $intents->reply($intent);
         $sender->handle($from, $reply);

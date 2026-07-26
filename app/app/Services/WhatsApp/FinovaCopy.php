@@ -2,6 +2,8 @@
 
 namespace App\Services\WhatsApp;
 
+use App\Services\Finance\Nlu\ExtractedTransaction;
+
 final class FinovaCopy
 {
     public static function greeting(): string
@@ -11,16 +13,17 @@ final class FinovaCopy
 
     public static function help(): string
     {
-        return "Eu sou a Finova. Por enquanto você pode:\n"
-            ."• dizer *oi* — eu me apresento\n"
+        return "Eu sou a Finova. Você pode:\n"
+            ."• dizer *oi*\n"
             ."• enviar um código de 6 dígitos do Hub — vinculo seu WhatsApp\n"
+            ."• lançar gastos/receitas em texto, ex.: *gastei 45 no almoço* ou *recebi 3000 de salário*\n"
             ."• digitar *ajuda* — este menu\n\n"
-            .'Em breve: lançamentos, agenda e tarefas por aqui.';
+            .'Se eu ficar na dúvida, peço confirmação (sim/não) antes de gravar.';
     }
 
     public static function fallback(): string
     {
-        return 'Recebi sua mensagem. Ainda estou aprendendo. Digite *ajuda* para ver o que já funciona, ou vincule seu número pelo Inova Hub.';
+        return 'Recebi sua mensagem. Ainda estou aprendendo. Digite *ajuda* ou envie algo como *gastei 30 no uber*.';
     }
 
     public static function otpLinked(): string
@@ -31,5 +34,31 @@ final class FinovaCopy
     public static function otpFailed(): string
     {
         return 'Não consegui validar esse código. Gere um novo OTP no Inova Hub (menu WhatsApp) e envie só os 6 dígitos.';
+    }
+
+    public static function transactionNeedsLink(): string
+    {
+        return 'Para lançar gastos por aqui, vincule seu WhatsApp no Inova Hub (menu WhatsApp → OTP).';
+    }
+
+    public static function transactionConfirmPrompt(ExtractedTransaction $tx): string
+    {
+        $valor = 'R$ '.number_format($tx->amountCents / 100, 2, ',', '.');
+        $tipo = $tx->type === 'income' ? 'receita' : 'despesa';
+
+        return "Confirma {$tipo} de {$valor} em *{$tx->categorySlug}*? Responda *sim* ou *não*.";
+    }
+
+    public static function transactionSaved(ExtractedTransaction $tx): string
+    {
+        $valor = 'R$ '.number_format($tx->amountCents / 100, 2, ',', '.');
+        $tipo = $tx->type === 'income' ? 'Receita' : 'Despesa';
+
+        return "{$tipo} de {$valor} registrada em *{$tx->categorySlug}*. Pode ver no Hub → Lançamentos.";
+    }
+
+    public static function transactionCancelled(): string
+    {
+        return 'Ok, cancelei. Nada foi gravado.';
     }
 }

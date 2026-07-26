@@ -122,17 +122,13 @@ class WhatsappWebhookTest extends TestCase
             'status' => WebhookEvent::STATUS_RECEIVED,
         ]);
 
-        (new ProcessWhatsAppMessage([
+        $job = new ProcessWhatsAppMessage([
             'wamid' => 'wamid.OTP1',
             'from' => '5511999887766',
             'text' => 'Meu codigo e 654321 obrigado',
             'type' => 'text',
-        ]))->handle(
-            app(\App\Services\WhatsApp\ParsesWhatsappWebhook::class),
-            app(\App\Services\WhatsApp\ConsumesWhatsappOtp::class),
-            app(\App\Services\WhatsApp\ResolvesFinovaIntent::class),
-            app(\App\Services\WhatsApp\SendsWhatsappText::class),
-        );
+        ]);
+        app()->call([$job, 'handle']);
 
         $this->assertDatabaseHas('whatsapp_identities', [
             'user_id' => $user->id,

@@ -8,11 +8,8 @@ use App\Models\Organization;
 use App\Models\User;
 use App\Models\WebhookEvent;
 use App\Models\WhatsappOtp;
-use App\Services\WhatsApp\ConsumesWhatsappOtp;
 use App\Services\WhatsApp\FinovaCopy;
-use App\Services\WhatsApp\ParsesWhatsappWebhook;
 use App\Services\WhatsApp\ResolvesFinovaIntent;
-use App\Services\WhatsApp\SendsWhatsappText;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -48,17 +45,13 @@ class FinovaReplyTest extends TestCase
             'status' => WebhookEvent::STATUS_RECEIVED,
         ]);
 
-        (new ProcessWhatsAppMessage([
+        $job = new ProcessWhatsAppMessage([
             'wamid' => 'wamid.OI1',
             'from' => '5511999887766',
             'text' => 'oi',
             'type' => 'text',
-        ]))->handle(
-            app(ParsesWhatsappWebhook::class),
-            app(ConsumesWhatsappOtp::class),
-            app(ResolvesFinovaIntent::class),
-            app(SendsWhatsappText::class),
-        );
+        ]);
+        app()->call([$job, 'handle']);
 
         Http::assertSent(function ($request) {
             return str_contains($request->url(), '/messages')
@@ -88,17 +81,13 @@ class FinovaReplyTest extends TestCase
             'status' => WebhookEvent::STATUS_RECEIVED,
         ]);
 
-        (new ProcessWhatsAppMessage([
+        $job = new ProcessWhatsAppMessage([
             'wamid' => 'wamid.HELP1',
             'from' => '5511999887766',
             'text' => 'ajuda',
             'type' => 'text',
-        ]))->handle(
-            app(ParsesWhatsappWebhook::class),
-            app(ConsumesWhatsappOtp::class),
-            app(ResolvesFinovaIntent::class),
-            app(SendsWhatsappText::class),
-        );
+        ]);
+        app()->call([$job, 'handle']);
 
         Http::assertSent(function ($request) {
             return ($request['text']['body'] ?? '') === FinovaCopy::help();
@@ -138,17 +127,13 @@ class FinovaReplyTest extends TestCase
             'status' => WebhookEvent::STATUS_RECEIVED,
         ]);
 
-        (new ProcessWhatsAppMessage([
+        $job = new ProcessWhatsAppMessage([
             'wamid' => 'wamid.OTP2',
             'from' => '5511999887766',
             'text' => '654321',
             'type' => 'text',
-        ]))->handle(
-            app(ParsesWhatsappWebhook::class),
-            app(ConsumesWhatsappOtp::class),
-            app(ResolvesFinovaIntent::class),
-            app(SendsWhatsappText::class),
-        );
+        ]);
+        app()->call([$job, 'handle']);
 
         $this->assertDatabaseHas('whatsapp_identities', [
             'user_id' => $user->id,

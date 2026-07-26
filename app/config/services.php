@@ -42,4 +42,16 @@ return [
         'app_secret' => env('META_APP_SECRET'),
     ],
 
+    'llm' => [
+        // OpenAI: https://api.openai.com/v1 + OPENAI_API_KEY
+        // Groq:   https://api.groq.com/openai/v1 + GROQ_API_KEY
+        'api_key' => env('OPENAI_API_KEY', env('GROQ_API_KEY')),
+        'base_url' => env('LLM_BASE_URL', env('OPENAI_API_KEY') ? 'https://api.openai.com/v1' : (env('GROQ_API_KEY') ? 'https://api.groq.com/openai/v1' : '')),
+        'model' => env('LLM_MODEL', env('GROQ_API_KEY') ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini'),
+    ],
+
+    'finova' => [
+        'nlu_confidence_threshold' => (float) env('FINOVA_NLU_CONFIDENCE_THRESHOLD', 0.75),
+    ],
+
 ];

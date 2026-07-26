@@ -5,12 +5,17 @@ namespace App\Services\Auth;
 use App\Models\Membership;
 use App\Models\Organization;
 use App\Models\User;
+use App\Services\Finance\SeedsDefaultCategories;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 final class RegistersUser
 {
+    public function __construct(
+        private readonly SeedsDefaultCategories $seedsDefaultCategories,
+    ) {}
+
     /**
      * @param  array{name: string, email: string, password: string, organization_name?: string}  $data
      * @return array{user: User, organization: Organization}
@@ -43,6 +48,8 @@ final class RegistersUser
                 'user_id' => $user->id,
                 'role' => Membership::ROLE_OWNER,
             ]);
+
+            $this->seedsDefaultCategories->handle($organization);
 
             return compact('user', 'organization');
         });

@@ -231,13 +231,13 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Tenancy.
 - **Decisões:** Categorias default BR (moradia, comida, transporte…); multi-currency depois.
 - **Tarefas:**
-  - [ ] Migrations transactions/categories
-  - [ ] Seed categorias
-  - [ ] CRUD API
+  - [x] Migrations transactions/categories
+  - [x] Seed categorias
+  - [x] CRUD API
 - **Entregáveis:** Modelo financeiro.
 - **Donos:** Agente
 - **Dependências:** D08
-- **Critério de pronto:** CRUD via API/tests.
+- **Critério de pronto:** CRUD via API/tests. (`/api/v1/transactions` + `/api/v1/categories`; BR-011)
 
 ### D16 — Hub: lista e filtros de lançamentos
 

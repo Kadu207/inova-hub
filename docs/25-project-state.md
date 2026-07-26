@@ -1,6 +1,6 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-25 (D14 retro Semana 2; D13 live na VPS)  
+**Última atualização:** 2026-07-25 (D15 categorias/transactions API no `main`)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
 
 ## DNS / VPS
@@ -9,21 +9,23 @@
 |------|--------|
 | Hub + API HTTPS | **200** ✅ |
 | `/opt/inovahub` Git | OK |
-| D08–D13 em prod | OK (`3a370f6`) |
-| Semana 2 | **Fechada no código**; E2E Finova bloqueada por tokens Meta (P0) |
+| D08–D13 em prod | OK |
+| D14 | Docs/retro OK |
+| D15 na VPS | **Pendente** (`git pull` + migrate + `db:seed` categorias) |
 
 ## Código
 
 | Item | Status |
 |------|--------|
-| Suite local | **23 passed** |
-| Retro | `docs/28-week2-retro.md` |
-| Checklist | `docs/14-prerequisites-checklist.md` atualizado |
-| Seed login | `admin@inovahub.test` / `password` (só teste) |
+| `categories` + `transactions` | Migration + RLS |
+| Seed BR default | `SeedsDefaultCategories` no register/seed |
+| API | `/api/v1/categories`, `/api/v1/transactions` (Sanctum + tenant) |
+| BR-011 | Catálogo + Pest IDOR |
+| Suite | Finance + regressão verdes |
 
 ## Operador
 
-1. Login Hub: https://inovahub.inovatitech.com.br/login  
-2. Se seed sumiu: `docker compose -f docker-compose.prod.yml --env-file .env.prod exec app php artisan db:seed --force`  
-3. Meta tokens + webhook (P0) — `docs/27-meta-whatsapp-setup.md`  
-4. Próximo: **D15** domínio transações/categorias.
+1. Login seed: `admin@inovahub.test` / `password`
+2. Deploy D15: pull + migrate + seed (categorias da org demo)
+3. Meta tokens ainda P0 para Finova send
+4. Próximo: **D16** UI lista/filtros de lançamentos no Hub

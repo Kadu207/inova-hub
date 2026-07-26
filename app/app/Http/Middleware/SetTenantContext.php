@@ -48,7 +48,10 @@ final class SetTenantContext
         }
 
         TenantContext::set((string) $organizationId);
-        $request->session()->put('current_organization_id', (string) $organizationId);
+
+        if ($request->hasSession()) {
+            $request->session()->put('current_organization_id', (string) $organizationId);
+        }
 
         return $next($request);
     }

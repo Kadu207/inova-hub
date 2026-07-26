@@ -13,6 +13,6 @@ Toda regra tem ID `BR-xxx`. Mudança = atualizar este índice + arquivo + teste 
 | BR-007 | Cancelamento self-service Asaas | Billing | a criar |
 | BR-008 | Export e exclusão de conta | LGPD | a criar |
 | BR-009 | Papéis owner/member/viewer | Equipe | a criar |
-| BR-010 | Idempotência de webhooks | EDD | a criar |
+| BR-011 | Lançamentos manuais e categorias | Finanças | `tests/Feature/FinanceTransactionApiTest.php` |
 
 Detalhes em arquivos `BR-00x-*.md` nesta pasta.

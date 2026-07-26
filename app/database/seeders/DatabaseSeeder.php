@@ -6,6 +6,7 @@ use App\Models\Membership;
 use App\Models\Organization;
 use App\Models\TenantNote;
 use App\Models\User;
+use App\Services\Finance\SeedsDefaultCategories;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -45,5 +46,7 @@ class DatabaseSeeder extends Seeder
                 'body' => 'Nota seed para validar multi-tenant (D08).',
             ],
         );
+
+        app(SeedsDefaultCategories::class)->handle($org);
     }
 }

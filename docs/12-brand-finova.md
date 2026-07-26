@@ -16,7 +16,7 @@
 - Nunca finge ser banco ou fazer Pix sem produto explícito  
 - Transparência: “salvei no Inova Hub” / “pode ver no Hub → Lançamentos”
 
-## Intents implementados (Semana 3)
+## Intents implementados (Semana 3–4)
 
 | Intent | Exemplos | Status |
 |--------|----------|--------|
@@ -26,6 +26,9 @@
 | `tx.income` | “Recebi 2000 de freelance” | ✅ D17 |
 | `tx.query` | “Quanto gastei essa semana?” | ✅ D19 (hoje / semana / mês) |
 | `tx.audio` | áudio → Whisper → mesmo NLU | ✅ D18 |
+| `bank.balance` | “Qual meu saldo?” | ✅ D26 |
+| `bank.statement` | “extrato”, “últimas transações” | ✅ D26 |
+| `bank.cards` | “meus cartões”, “fatura do cartão” | ✅ D26 |
 | `fallback` | texto não reconhecido | ✅ D12 |
 
 ## Intents MVP ainda P0 (próximas semanas)
@@ -36,7 +39,6 @@
 | `event.query` | “O que tenho amanhã?” | Lista |
 | `task.create` | “Me lembra de enviar a NF” | Tarefa |
 | `support` | “Falar com humano” | Handoff |
-| `of.*` | saldo/extrato Open Finance | Semana 4 Pluggy |
 
 ## Confirmação (BR-004)
 

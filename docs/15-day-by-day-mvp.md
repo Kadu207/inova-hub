@@ -377,8 +377,8 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Dados OF.
 - **Decisões:** Intents `bank.balance`, `bank.statement`, `bank.cards`.
 - **Tarefas:**
-  - [ ] Handlers + copy Finova
-  - [ ] Eval set bancário
+  - [x] Handlers + copy Finova
+  - [x] Eval set bancário (`BankIntentEvalSet`)
 - **Entregáveis:** Consultas no Zap.
 - **Donos:** Agente
 - **Dependências:** D25, D12

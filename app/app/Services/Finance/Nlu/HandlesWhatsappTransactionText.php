@@ -7,6 +7,9 @@ use App\Models\Transaction;
 use App\Models\WhatsappIdentity;
 use App\Services\Finance\Query\ResolvesTransactionQuery;
 use App\Services\Finance\Query\SummarizesTransactionsForPeriod;
+use App\Services\OpenFinance\BankIntent;
+use App\Services\OpenFinance\ResolvesBankQuery;
+use App\Services\OpenFinance\SummarizesOpenFinance;
 use App\Services\WhatsApp\FinovaCopy;
 use App\Support\Tenancy\TenantContext;
 use App\Support\WhatsApp\PhoneNormalizer;
@@ -20,6 +23,8 @@ final class HandlesWhatsappTransactionText
         private readonly PendingTransactionConfirmation $pending,
         private readonly ResolvesTransactionQuery $queryResolver,
         private readonly SummarizesTransactionsForPeriod $summarizer,
+        private readonly ResolvesBankQuery $bankResolver,
+        private readonly SummarizesOpenFinance $ofSummarizer,
     ) {}
 
     /**
@@ -51,6 +56,32 @@ final class HandlesWhatsappTransactionText
             $this->persist($identity, $pendingTx);
 
             return ['handled' => true, 'reply' => FinovaCopy::transactionSaved($pendingTx)];
+        }
+
+        $bankIntent = $this->bankResolver->handle($text);
+        if ($bankIntent !== null) {
+            if ($identity === null) {
+                return ['handled' => true, 'reply' => FinovaCopy::transactionNeedsLink()];
+            }
+
+            TenantContext::set($identity->organization_id);
+            try {
+                $summary = $this->ofSummarizer->handle();
+            } finally {
+                TenantContext::clear();
+            }
+
+            if (! $summary['has_connection']) {
+                return ['handled' => true, 'reply' => FinovaCopy::bankNeedsConnection()];
+            }
+
+            $reply = match ($bankIntent) {
+                BankIntent::Balance => FinovaCopy::bankBalance($summary),
+                BankIntent::Statement => FinovaCopy::bankStatement($summary),
+                BankIntent::Cards => FinovaCopy::bankCards($summary),
+            };
+
+            return ['handled' => true, 'reply' => $reply];
         }
 
         $period = $this->queryResolver->handle($text);

@@ -26,6 +26,17 @@ final class ResolvesTransactionQuery
             return null;
         }
 
+        // Consultas OF (saldo/extrato/cartão) são tratadas por ResolvesBankQuery
+        if (preg_match('/\b(extrato|cart(?:ao|ão|oes|ões)|fatura\s+(do\s+)?cart(?:ao|ão)|limite\s+(do\s+)?cart(?:ao|ão))\b/u', $normalized) === 1) {
+            return null;
+        }
+        if (preg_match('/\b(qual\s+(é\s+)?(o\s+)?meu\s+saldo|meu\s+saldo|saldo\s+(do\s+)?banco|saldo\s+(da\s+)?conta|quanto\s+tenho|tenho\s+na\s+conta)\b/u', $normalized) === 1) {
+            return null;
+        }
+        if (preg_match('/^(qual\s+)?(é\s+)?(o\s+)?saldo\??$/u', $normalized) === 1) {
+            return null;
+        }
+
         if (preg_match('/\b(hoje|agora)\b/u', $normalized) === 1) {
             return TransactionPeriod::Today;
         }

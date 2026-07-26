@@ -37,6 +37,13 @@ Esperado: `Pluggy OK — N connectors` e tabela com bancos BR (inclui conectores
 
 ## Próximos dias
 
-- **D23** Connect Token + widget Hub  
-- **D24** webhook `/webhooks/pluggy` + persistência  
-- **D25+** sync contas/extratos  
+- **D23** ✅ Connect Token + widget Hub (`/hub/connections`)  
+- **D24** webhook `/webhooks/pluggy` + sync  
+- **D25+** contas/extratos no Hub  
+
+## Widget (D23)
+
+1. Login no Hub → https://inovahub.inovatitech.com.br/hub/connections  
+2. **Conectar banco** → widget Pluggy (`includeSandbox=true`)  
+3. Escolher conector de teste (ex. Pluggy Bank)  
+4. Sucesso grava `of_items.pluggy_item_id`

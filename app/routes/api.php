@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AggregateController;
 use App\Http\Controllers\Api\V1\CategoryController;
+use App\Http\Controllers\Api\V1\OpenFinanceController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,4 +21,6 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function (): void {
     Route::get('aggregates', [AggregateController::class, 'index']);
     Route::get('aggregates/by-category', [AggregateController::class, 'byCategory']);
     Route::get('aggregates/daily', [AggregateController::class, 'daily']);
+
+    Route::post('open-finance/connect-token', [OpenFinanceController::class, 'connectToken']);
 });

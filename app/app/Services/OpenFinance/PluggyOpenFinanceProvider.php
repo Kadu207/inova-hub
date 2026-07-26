@@ -80,4 +80,33 @@ final class PluggyOpenFinanceProvider implements OpenFinanceProvider
 
         return $connectors;
     }
+
+    public function createConnectToken(array $options = []): string
+    {
+        $apiKey = $this->authenticate();
+        $baseUrl = rtrim((string) config('services.pluggy.base_url'), '/');
+
+        $payload = [];
+        if ($options !== []) {
+            $payload['options'] = $options;
+        }
+
+        try {
+            $response = Http::baseUrl($baseUrl)
+                ->withHeaders(['X-API-KEY' => $apiKey])
+                ->acceptJson()
+                ->timeout(20)
+                ->post('/connect_token', $payload)
+                ->throw();
+        } catch (RequestException $e) {
+            throw new RuntimeException('Pluggy connect_token failed: '.$e->getMessage(), previous: $e);
+        }
+
+        $token = (string) ($response->json('accessToken') ?? '');
+        if ($token === '') {
+            throw new RuntimeException('Pluggy connect_token response missing accessToken.');
+        }
+
+        return $token;
+    }
 }

@@ -121,4 +121,22 @@ class PluggyOpenFinanceAdapterTest extends TestCase
             ->expectsOutputToContain('Banco Demo')
             ->assertSuccessful();
     }
+
+    public function test_create_connect_token_returns_access_token(): void
+    {
+        Http::fake([
+            'api.pluggy.ai/auth' => Http::response(['apiKey' => 'api-key'], 200),
+            'api.pluggy.ai/connect_token' => Http::response(['accessToken' => 'ctok'], 200),
+        ]);
+
+        $token = app(OpenFinanceProvider::class)->createConnectToken([
+            'clientUserId' => 'org:1:user:2',
+        ]);
+
+        $this->assertSame('ctok', $token);
+        Http::assertSent(function ($request) {
+            return str_contains($request->url(), '/connect_token')
+                && ($request['options']['clientUserId'] ?? null) === 'org:1:user:2';
+        });
+    }
 }

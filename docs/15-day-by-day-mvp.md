@@ -336,12 +336,12 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 ### D23 — Widget Connect no Hub
 
 - **Requisitos:** Adapter; auth Hub.
-- **Decisões:** Connect token por usuário; UX “Conectar banco”.
+- **Decisões:** Connect token por usuário; UX “Conectar banco”; `/app/connections` → `/hub/connections`.
 - **Tarefas:**
-  - [ ] Endpoint create connect token
-  - [ ] Embutir widget Pluggy
-  - [ ] Tela `/app/connections`
-- **Entregáveis:** User inicia OAuth bancário sandbox.
+  - [x] Endpoint create connect token (`POST /hub/connections/connect-token` + API)
+  - [x] Embutir widget Pluggy (`includeSandbox`)
+  - [x] Tela `/hub/connections` (+ redirect `/app/connections`)
+- **Entregáveis:** User inicia OAuth bancário sandbox; `of_items` guarda `pluggy_item_id` no sucesso.
 - **Donos:** Agente
 - **Dependências:** D22, D09
 - **Critério de pronto:** Fluxo Connect completa item de teste Pluggy.

@@ -93,4 +93,12 @@
             </p>
         @endif
     </div>
+
+    <div class="card" style="margin-top:var(--space);">
+        <p class="sub" style="margin-top:0;">Bancos (Open Finance)</p>
+        <p class="sub">Conecte contas via Pluggy (somente leitura).</p>
+        <p style="margin-top:1rem;">
+            <a class="btn" href="{{ route('hub.connections.index') }}">Conectar banco</a>
+        </p>
+    </div>
 @endsection

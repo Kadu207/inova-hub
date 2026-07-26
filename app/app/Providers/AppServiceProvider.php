@@ -3,10 +3,12 @@
 namespace App\Providers;
 
 use App\Models\Category;
+use App\Models\OfItem;
 use App\Models\Organization;
 use App\Models\TenantNote;
 use App\Models\Transaction;
 use App\Policies\CategoryPolicy;
+use App\Policies\OfItemPolicy;
 use App\Policies\OrganizationPolicy;
 use App\Policies\TenantNotePolicy;
 use App\Policies\TransactionPolicy;
@@ -41,5 +43,6 @@ class AppServiceProvider extends ServiceProvider
         Gate::policy(TenantNote::class, TenantNotePolicy::class);
         Gate::policy(Category::class, CategoryPolicy::class);
         Gate::policy(Transaction::class, TransactionPolicy::class);
+        Gate::policy(OfItem::class, OfItemPolicy::class);
     }
 }

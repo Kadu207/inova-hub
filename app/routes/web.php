@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\AuthSessionController;
+use App\Http\Controllers\Hub\ConnectionController;
 use App\Http\Controllers\Hub\TransactionController;
 use App\Http\Controllers\Hub\WhatsappLinkController;
 use App\Http\Controllers\HubHomeController;
@@ -25,12 +26,17 @@ Route::post('/logout', [AuthSessionController::class, 'destroy'])
     ->name('logout');
 
 Route::redirect('/app/transactions', '/hub/transactions');
+Route::redirect('/app/connections', '/hub/connections');
 
 Route::middleware(['auth', SetTenantContext::class])->prefix('hub')->group(function () {
     Route::get('/', HubHomeController::class)->name('hub.home');
     Route::get('/whatsapp', [WhatsappLinkController::class, 'show'])->name('hub.whatsapp');
     Route::post('/whatsapp/otp', [WhatsappLinkController::class, 'issue'])->name('hub.whatsapp.otp');
     Route::post('/whatsapp/confirm-dev', [WhatsappLinkController::class, 'confirmDev'])->name('hub.whatsapp.confirm-dev');
+
+    Route::get('/connections', [ConnectionController::class, 'index'])->name('hub.connections.index');
+    Route::post('/connections/connect-token', [ConnectionController::class, 'connectToken'])->name('hub.connections.connect-token');
+    Route::post('/connections/items', [ConnectionController::class, 'storeItem'])->name('hub.connections.items.store');
 
     Route::get('/transactions', [TransactionController::class, 'index'])->name('hub.transactions.index');
     Route::get('/transactions/create', [TransactionController::class, 'create'])->name('hub.transactions.create');

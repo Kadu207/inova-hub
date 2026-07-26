@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Inova Hub')</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <style>
         :root {
             --bg: #0f1419;
@@ -188,5 +189,6 @@
     <main class="shell">
         @yield('content')
     </main>
+    @yield('scripts')
 </body>
 </html>

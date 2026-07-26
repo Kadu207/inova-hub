@@ -1,6 +1,6 @@
 # Estado real do projeto (atualizar a cada mudança)
 
-**Última atualização:** 2026-07-25 (D22 Pluggy adapter)  
+**Última atualização:** 2026-07-25 (D23 Pluggy Connect widget)  
 **Regra:** agentes devem ler isto e **corrigir** após qualquer deploy/DNS/tunnel — não alucinar.
 
 ## DNS / VPS
@@ -9,20 +9,20 @@
 |------|--------|
 | Hub + API HTTPS | **200** ✅ |
 | Swap VPS | `/swapfile-inova` 4G ✅ |
-| D21 na VPS | Deploy feito (pull `b544ff9`) |
-| D22 na VPS | **Pendente** (`git pull` + rebuild app; colar `PLUGGY_*`) |
+| D22 na VPS | Smoke OK (`pluggy:connectors` → 235 connectors) |
+| D23 na VPS | **Pendente** (`git pull` + migrate + rebuild **app**) |
 
 ## Código
 
 | Item | Status |
 |------|--------|
-| `OpenFinanceProvider` | Pluggy HTTP adapter |
-| Auth + connectors | `POST /auth` · `GET /connectors` |
-| Smoke | `php artisan pluggy:connectors` |
-| Setup | `docs/31-pluggy-setup.md` |
+| Connect Token | `POST /hub/connections/connect-token` · `POST /api/v1/open-finance/connect-token` |
+| Hub UI | `/hub/connections` (+ redirect `/app/connections`) |
+| Persistência | tabela `of_items` (itemId no onSuccess) |
+| Widget | CDN Pluggy + `includeSandbox` |
 
 ## Operador
 
-1. Dashboard Pluggy → Application → Client ID/Secret no `.env` / `.env.prod`  
-2. Deploy D22 + `docker compose … exec app php artisan pluggy:connectors`  
-3. Próximo: **D23** widget Connect no Hub
+1. Deploy D23 + `php artisan migrate --force`  
+2. Abrir Hub → **Conectar banco** → conector sandbox Pluggy Bank  
+3. Próximo: **D24** webhook Pluggy + sync accounts/txs

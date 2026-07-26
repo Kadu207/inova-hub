@@ -143,7 +143,11 @@ final class ProcessWhatsAppMessage implements ShouldQueue
             return $text;
         } catch (RuntimeException $e) {
             Log::notice('whatsapp.audio_stt_skipped', ['reason' => $e->getMessage()]);
-            $sender->handle($from, FinovaCopy::audioNeedsStt());
+
+            $reply = str_contains($e->getMessage(), 'STT requires')
+                ? FinovaCopy::audioNeedsStt()
+                : FinovaCopy::audioFailed();
+            $sender->handle($from, $reply);
 
             return null;
         }

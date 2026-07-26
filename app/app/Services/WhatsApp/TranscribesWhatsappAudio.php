@@ -22,6 +22,10 @@ class TranscribesWhatsappAudio
             throw new RuntimeException('STT requires OPENAI_API_KEY or GROQ_API_KEY.');
         }
 
+        if ($bytes === '') {
+            throw new RuntimeException('Empty audio bytes.');
+        }
+
         $extension = str_contains($mimeType, 'mpeg') || str_contains($mimeType, 'mp3') ? 'mp3' : 'ogg';
         $path = tempnam(sys_get_temp_dir(), 'finova_audio_');
         if ($path === false) {

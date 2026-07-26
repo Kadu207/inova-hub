@@ -30,20 +30,22 @@ class FinovaTransactionNluTest extends TestCase
     {
         $extractor = new HeuristicTransactionExtractor;
         $cases = TransactionNluEvalSet::cases();
+        $this->assertCount(50, $cases);
+
         $hits = 0;
+        $misses = [];
 
         foreach ($cases as $case) {
             $extracted = $extractor->extract($case['text']);
-            if ($extracted === null) {
-                continue;
-            }
-
             if (
-                $extracted->type === $case['type']
+                $extracted !== null
+                && $extracted->type === $case['type']
                 && $extracted->amountCents === $case['amount_cents']
                 && $extracted->categorySlug === $case['category_slug']
             ) {
                 $hits++;
+            } else {
+                $misses[] = $case['text'];
             }
         }
 
@@ -51,8 +53,28 @@ class FinovaTransactionNluTest extends TestCase
         $this->assertGreaterThanOrEqual(
             0.85,
             $accuracy,
-            sprintf('NLU accuracy %.0f%% (%d/%d) below 85%%', $accuracy * 100, $hits, count($cases))
+            sprintf(
+                'NLU accuracy %.0f%% (%d/%d) below 85%%. Misses: %s',
+                $accuracy * 100,
+                $hits,
+                count($cases),
+                implode(' | ', $misses)
+            )
         );
+    }
+
+    public function test_rejects_common_false_positives(): void
+    {
+        $extractor = new HeuristicTransactionExtractor;
+
+        $this->assertNull($extractor->extract('oi'));
+        $this->assertNull($extractor->extract('ajuda'));
+        $this->assertNull($extractor->extract('quanto gastei essa semana?'));
+        $this->assertNull($extractor->extract('resumo do mês'));
+        $this->assertNull($extractor->extract('gastei 50 USD no hotel'));
+        $this->assertNull($extractor->extract('comprei em 3x de 100'));
+        $this->assertNull($extractor->extract('654321'));
+        $this->assertNull($extractor->extract(''));
     }
 
     public function test_linked_user_persists_high_confidence_expense(): void

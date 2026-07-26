@@ -177,6 +177,53 @@ class FinovaAudioSttTest extends TestCase
         ]);
     }
 
+    public function test_empty_audio_does_not_crash_and_replies_failed(): void
+    {
+        config([
+            'services.whatsapp.token' => 'wa-token',
+            'services.whatsapp.phone_number_id' => 'phone-1',
+            'services.llm.api_key' => 'sk-test',
+            'services.llm.stt_base_url' => 'https://api.openai.com/v1',
+        ]);
+
+        Http::fake([
+            'graph.facebook.com/v21.0/media-empty' => Http::response([
+                'url' => 'https://lookaside.fbsbx.com/media-empty',
+                'mime_type' => 'audio/ogg',
+            ], 200),
+            'lookaside.fbsbx.com/*' => Http::response('', 200),
+            'graph.facebook.com/*/messages' => Http::response([
+                'messages' => [['id' => 'wamid.out']],
+            ], 200),
+        ]);
+
+        WebhookEvent::query()->create([
+            'source' => WebhookEvent::SOURCE_WHATSAPP,
+            'external_id' => 'wamid.AUDIO.EMPTY',
+            'status' => WebhookEvent::STATUS_RECEIVED,
+        ]);
+
+        $job = new ProcessWhatsAppMessage([
+            'wamid' => 'wamid.AUDIO.EMPTY',
+            'from' => '5511988001122',
+            'text' => '',
+            'type' => 'audio',
+            'media_id' => 'media-empty',
+        ]);
+        app()->call([$job, 'handle']);
+
+        Http::assertSent(function ($request) {
+            return str_contains($request->url(), '/messages')
+                && ($request['text']['body'] ?? '') === FinovaCopy::audioFailed();
+        });
+
+        $this->assertDatabaseHas('webhook_events', [
+            'external_id' => 'wamid.AUDIO.EMPTY',
+            'status' => WebhookEvent::STATUS_FAILED,
+        ]);
+        $this->assertDatabaseCount('transactions', 0);
+    }
+
     public function test_temp_audio_file_is_removed_after_stt(): void
     {
         config([

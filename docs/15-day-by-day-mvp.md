@@ -308,10 +308,10 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Intents financeiros.
 - **Decisões:** Lista de ambiguidades (parcelas, USD, etc.) → backlog.
 - **Tarefas:**
-  - [ ] Expandir eval set para 50
-  - [ ] Corrige falsos positivos
-  - [ ] Doc intents em `12-brand-finova.md` sync
-- **Entregáveis:** Relatório acurácia; intents atualizados.
+  - [x] Expandir eval set para 50
+  - [x] Corrige falsos positivos
+  - [x] Doc intents em `12-brand-finova.md` sync
+- **Entregáveis:** Relatório acurácia; intents atualizados. (`docs/30-week3-nlu-qa.md`)
 - **Donos:** Ambos
 - **Dependências:** D17–D20
 - **Critério de pronto:** ≥85% no eval 50; sem crash em áudio vazio.

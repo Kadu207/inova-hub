@@ -6,19 +6,19 @@ use App\Models\Transaction;
 use Carbon\Carbon;
 
 /**
- * Extrator determinístico PT-BR (funciona sem LLM). Meta D17: ≥85% no eval set.
+ * Extrator determinístico PT-BR (funciona sem LLM). Meta D21: ≥85% no eval set (50).
  */
 final class HeuristicTransactionExtractor implements TransactionExtractor
 {
     /** @var array<string, list<string>> */
     private const CATEGORY_KEYWORDS = [
-        'moradia' => ['aluguel', 'condominio', 'condomínio', 'luz', 'energia', 'agua', 'água', 'internet', 'gas', 'gás'],
-        'alimentacao' => ['almoco', 'almoço', 'jantar', 'cafe', 'café', 'mercado', 'ifood', 'padaria', 'restaurante', 'lanche', 'comida'],
-        'transporte' => ['uber', '99', 'taxi', 'táxi', 'gasolina', 'estacionamento', 'onibus', 'ônibus', 'metro', 'metrô', 'combustivel', 'combustível'],
-        'saude' => ['farmacia', 'farmácia', 'medico', 'médico', 'dentista', 'remedio', 'remédio', 'hospital', 'plano de saude', 'plano de saúde'],
-        'lazer' => ['cinema', 'bar', 'show', 'netflix', 'spotify', 'viagem', 'jogo', 'streaming'],
-        'educacao' => ['curso', 'escola', 'faculdade', 'livro', 'mensalidade', 'udemy'],
-        'salario' => ['salario', 'salário', 'pagamento', 'proventos', 'holerite'],
+        'moradia' => ['aluguel', 'condominio', 'condomínio', 'luz', 'energia', 'agua', 'água', 'internet', 'gás', 'iptu', 'reforma'],
+        'alimentacao' => ['almoço', 'almoco', 'jantar', 'café', 'cafe', 'mercado', 'ifood', 'padaria', 'restaurante', 'lanche', 'comida', 'supermercado', 'açougue', 'acougue'],
+        'transporte' => ['uber', 'taxi', 'táxi', 'gasolina', 'estacionamento', 'ônibus', 'onibus', 'metrô', 'metro', 'combustível', 'combustivel', 'pedágio', 'pedagio', 'passagem'],
+        'saude' => ['farmácia', 'farmacia', 'médico', 'medico', 'dentista', 'remédio', 'remedio', 'hospital', 'plano de saúde', 'plano de saude', 'exame', 'consulta'],
+        'lazer' => ['cinema', 'bar', 'show', 'netflix', 'spotify', 'viagem', 'streaming', 'teatro', 'parque'],
+        'educacao' => ['curso', 'escola', 'faculdade', 'livro', 'mensalidade', 'udemy', 'faculdade', 'material escolar'],
+        'salario' => ['salário', 'salario', 'proventos', 'holerite', 'freelance', 'freela'],
     ];
 
     public function extract(string $text): ?ExtractedTransaction
@@ -30,13 +30,28 @@ final class HeuristicTransactionExtractor implements TransactionExtractor
             return null;
         }
 
-        if (preg_match('/\b(oi|ol[aá]|ajuda|help|menu)\b/u', $normalized) === 1
-            && $this->parseAmountCents($normalized) === null) {
+        // Falsos positivos: greeting/help/query sem valor de lançamento
+        if ($this->looksLikeNonTransaction($normalized)) {
+            return null;
+        }
+
+        // Backlog D21: USD / $ sem conversão — não gravar como BRL
+        if (preg_match('/\b(usd|d[oó]lar(?:es)?|\$)\b/u', $normalized) === 1) {
+            return null;
+        }
+
+        // Parcelas / cartão em N vezes — ambíguo (backlog)
+        if (preg_match('/\b(\d+)\s*x\b|\bparcelad[oa]s?\b|\bem\s+\d+\s+vezes\b/u', $normalized) === 1) {
             return null;
         }
 
         $amount = $this->parseAmountCents($normalized);
         if ($amount === null || $amount < 1) {
+            return null;
+        }
+
+        // Evita ano sozinho (2024–2030) sem cue monetário
+        if ($amount >= 202000 && $amount <= 203099 && ! $this->hasExplicitMoneyCue($normalized)) {
             return null;
         }
 
@@ -66,9 +81,24 @@ final class HeuristicTransactionExtractor implements TransactionExtractor
         );
     }
 
+    private function looksLikeNonTransaction(string $normalized): bool
+    {
+        if (preg_match('/\b(oi|ol[aá]|ajuda|help|menu|obrigad[oa]|valeu)\b/u', $normalized) === 1
+            && $this->parseAmountCents($normalized) === null) {
+            return true;
+        }
+
+        if (preg_match('/\b(quanto|quantos|resumo|totais?|saldo)\b/u', $normalized) === 1
+            && preg_match('/\b(gastei|paguei|comprei|recebi|ganhei)\s+\d/u', $normalized) !== 1) {
+            return true;
+        }
+
+        return false;
+    }
+
     private function detectType(string $normalized): string
     {
-        if (preg_match('/\b(recebi|ganhei|entrou|depositaram|renda|sal[aá]rio|proventos)\b/u', $normalized) === 1) {
+        if (preg_match('/\b(recebi|ganhei|entrou|depositaram|renda|sal[aá]rio|proventos|freelance|freela)\b/u', $normalized) === 1) {
             return Transaction::TYPE_INCOME;
         }
 
@@ -91,6 +121,10 @@ final class HeuristicTransactionExtractor implements TransactionExtractor
                 }
             }
 
+            if (str_contains($normalized, 'pagamento') && preg_match('/\b(recebi|ganhei)\b/u', $normalized) === 1) {
+                return ['salario', 0.9];
+            }
+
             return ['salario', 0.7];
         }
 
@@ -103,7 +137,7 @@ final class HeuristicTransactionExtractor implements TransactionExtractor
             }
 
             foreach ($keywords as $keyword) {
-                if (str_contains($normalized, $keyword)) {
+                if (preg_match('/\b'.preg_quote($keyword, '/').'\b/u', $normalized) === 1) {
                     $score = mb_strlen($keyword) >= 5 ? 0.95 : 0.85;
                     if ($score > $bestScore) {
                         $bestScore = $score;
@@ -175,7 +209,7 @@ final class HeuristicTransactionExtractor implements TransactionExtractor
 
     private function hasExplicitMoneyCue(string $normalized): bool
     {
-        return preg_match('/\b(gastei|paguei|comprei|recebi|ganhei|r\$|reais|despesa|receita)\b/u', $normalized) === 1;
+        return preg_match('/\b(gastei|paguei|comprei|recebi|ganhei|r\$|reais|despesa|receita|custo)\b/u', $normalized) === 1;
     }
 
     private function buildDescription(string $original, string $slug): string

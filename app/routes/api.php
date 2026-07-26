@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AggregateController;
 use App\Http\Controllers\Api\V1\CategoryController;
 use App\Http\Controllers\Api\V1\TransactionController;
 use Illuminate\Support\Facades\Route;
@@ -15,4 +16,8 @@ Route::middleware(['auth:sanctum', 'tenant'])->group(function (): void {
     Route::put('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::patch('transactions/{transaction}', [TransactionController::class, 'update']);
     Route::delete('transactions/{transaction}', [TransactionController::class, 'destroy']);
+
+    Route::get('aggregates', [AggregateController::class, 'index']);
+    Route::get('aggregates/by-category', [AggregateController::class, 'byCategory']);
+    Route::get('aggregates/daily', [AggregateController::class, 'daily']);
 });

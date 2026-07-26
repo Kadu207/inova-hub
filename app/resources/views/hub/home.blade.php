@@ -35,16 +35,44 @@
                 </p>
             </div>
         </div>
-        @if ($weekSummary['top_categories'] !== [])
-            <p class="sub" style="margin:1rem 0 0.35rem;">Top categorias</p>
-            <ul style="margin:0;padding-left:1.1rem;color:var(--muted);">
-                @foreach ($weekSummary['top_categories'] as $row)
-                    <li>{{ $row['name'] }} — R$ {{ number_format($row['amount_cents'] / 100, 2, ',', '.') }}</li>
-                @endforeach
-            </ul>
-        @endif
         <p style="margin-top:1rem;">
             <a class="btn" href="{{ route('hub.transactions.index') }}">Ver lançamentos</a>
+        </p>
+    </div>
+
+    <div class="card" style="margin-top:var(--space);">
+        <p class="sub" style="margin-top:0;">Despesas por categoria (30 dias)</p>
+        <p class="sub">Total: R$ {{ number_format($dashboard['expense_cents'] / 100, 2, ',', '.') }}</p>
+
+        @forelse ($dashboard['by_category'] as $row)
+            <div class="chart-row">
+                <div class="chart-label">
+                    <span>{{ $row['name'] }}</span>
+                    <span>R$ {{ number_format($row['amount_cents'] / 100, 2, ',', '.') }} ({{ $row['pct'] }}%)</span>
+                </div>
+                <div class="chart-track" aria-hidden="true">
+                    <div class="chart-fill" style="width: {{ min(100, $row['pct']) }}%;"></div>
+                </div>
+            </div>
+        @empty
+            <p class="sub" style="margin:0;">Sem despesas nos últimos 30 dias.</p>
+        @endforelse
+    </div>
+
+    <div class="card" style="margin-top:var(--space);">
+        <p class="sub" style="margin-top:0;">Evolução de despesas (30 dias)</p>
+        <div class="spark" role="img" aria-label="Gráfico de despesas diárias dos últimos 30 dias">
+            @foreach ($dashboard['daily'] as $day)
+                @php
+                    $h = (int) round(($day['expense_cents'] / $maxDailyExpense) * 100);
+                @endphp
+                <div class="spark-bar" title="{{ $day['date'] }}: R$ {{ number_format($day['expense_cents'] / 100, 2, ',', '.') }}" style="height: {{ max($day['expense_cents'] > 0 ? 8 : 2, $h) }}%;"></div>
+            @endforeach
+        </div>
+        <p class="sub" style="margin:0.75rem 0 0;">
+            {{ \Illuminate\Support\Carbon::parse($dashboard['from'])->format('d/m') }}
+            —
+            {{ \Illuminate\Support\Carbon::parse($dashboard['to'])->format('d/m') }}
         </p>
     </div>
 

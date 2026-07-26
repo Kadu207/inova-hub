@@ -140,6 +140,41 @@
             padding: 0 1rem;
         }
         .tx-actions form { margin: 0; }
+        .chart-row { margin-top: 0.85rem; }
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+            margin-bottom: 0.35rem;
+            color: var(--muted);
+        }
+        .chart-track {
+            height: 10px;
+            border-radius: 999px;
+            background: #0c1116;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, var(--text) 12%, transparent);
+        }
+        .chart-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: var(--accent);
+            min-width: 2px;
+        }
+        .spark {
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            height: 96px;
+            padding: 0.35rem 0;
+        }
+        .spark-bar {
+            flex: 1 1 0;
+            min-width: 2px;
+            border-radius: 3px 3px 0 0;
+            background: color-mix(in srgb, var(--danger) 75%, white 10%);
+        }
         @media (min-width: 768px) {
             .shell { width: min(100% - 2rem, 40rem); }
             .filter-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }

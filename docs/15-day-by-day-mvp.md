@@ -296,12 +296,12 @@ Checklist de contas: [14-prerequisites-checklist.md](14-prerequisites-checklist.
 - **Requisitos:** Transações.
 - **Decisões:** Gráfico por categoria + evolução 30 dias (simples).
 - **Tarefas:**
-  - [ ] Endpoints aggregates
-  - [ ] Charts no Hub
+  - [x] Endpoints aggregates
+  - [x] Charts no Hub
 - **Entregáveis:** Dashboard útil.
 - **Donos:** Agente
 - **Dependências:** D16
-- **Critério de pronto:** Totais consistentes com lista.
+- **Critério de pronto:** Totais consistentes com lista. (`/api/v1/aggregates*`; barras CSS no `/hub`)
 
 ### D21 — Hardening NLU + semana 3 QA
 
